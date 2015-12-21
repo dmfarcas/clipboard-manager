@@ -1,0 +1,22 @@
+{
+  "name": "clipboard-manager",
+  "version": "1.0.0",
+  "description": "A simple clipboard manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "electron"
+  ],
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/npm/npm.git"
+},
+  "author": "Dan Farcas <dan@farcas.me>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "electron-prebuilt": "^0.36.1"
+  }
+}
