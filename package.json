@@ -10,10 +10,10 @@
   "keywords": [
     "electron"
   ],
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/npm/npm.git"
-},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/npm/npm.git"
+  },
   "author": "Dan Farcas <dan@farcas.me>",
   "license": "GPL-3.0",
   "dependencies": {

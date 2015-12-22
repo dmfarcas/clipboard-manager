@@ -2,12 +2,17 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <script src="node_modules/angular/angular.js"></script>
+    <!-- <script src="clipboard-manager.js"></script> -->
+    <title>Clipboard Manager</title>
   </head>
-  <body>
+  <body ng-controller="mainController">
     <h1>Hello World!</h1>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chrome <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <script>
+      // receiving events from main process
+      require('electron').ipcRenderer.on('copied', function(event, message) {
+     console.log(message);
+   });
+    </script>
   </body>
 </html>
