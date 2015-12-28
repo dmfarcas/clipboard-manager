@@ -6,6 +6,7 @@ const clipboard = require('electron').clipboard;
 const globalShortcut = electron.globalShortcut;
 const ipcMain = require('electron').ipcMain;
 const Tray = electron.Tray;
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -37,7 +38,7 @@ app.on('ready', function() {
 
   // Create a tray icon
   appIcon = new Tray('images/logo.png');
-  appIcon.setToolTip('This is my application.');
+  appIcon.setToolTip('Clipboard Manager.');
 
 
 
@@ -60,13 +61,12 @@ app.on('ready', function() {
   var ret = globalShortcut.register('CmdorCtrl+Shift+C', function() {
     mainWindow.webContents.send('copied', clipboard.readText());
     // sends the clipboard to the renderer
-    console.log(clipboard.readText());
   });
   if (!ret) {
     console.log('registration failed');
   }
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {

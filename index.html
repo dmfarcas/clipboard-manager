@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <!-- <script src="node_modules/angular/angular.js"></script> -->
     <!-- <script src="clipboard-manager.js"></script> -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
     <title>Clipboard Manager v0.0001</title>
   </head>
   <body ng-controller="mainController">
     <div class="container">
     <h1>Clipboard Manager</h1>
     <p>Use CTRL/CMD+SHIFT+C to save your current clipboard.</p>
+    <p>Click the text to save it to your clipboard. </p> 
     <table class="table table-hover" id="dasTable">
     <thead>
       <tr>
@@ -24,24 +25,33 @@
     <script>
       // receiving events from main process
       require('electron').ipcRenderer.on('copied', function(event, message) {
-     console.log(message);
      appendRow(message);
    });
 
+
+
    function appendRow(text) {
+     const clipboard = require('electron').clipboard;
      var table=document.getElementById("dasTable");
      var row=table.insertRow(1);
      var newCell=row.insertCell(0);
-     var newText  = document.createTextNode(text)
+     newCell.setAttribute("contenteditable", "true");
+     // It works, hooray.
+     newCell.setAttribute("onclick", "execCommand('selectAll',false,null); document.execCommand('Copy', false, null);");
+    //  newCell.addEventListener("click", function(){
+    //    copyPrompt(text)
+    //  }, false);
+     var newText  = document.createTextNode(text);
      newCell.appendChild(newText);
+   }
 
-      }
     </script>
     <p> To do:
     <ul>
       <li>Save clipboard on a specific shortcut</li>
       <li>Some electron stuff.</li>
       <li>Save to localStorage.</li>
+      <li>Use Electron directly to save to clipboard</li>
     </ul>
 
   </div>
