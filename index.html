@@ -2,17 +2,48 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <script src="node_modules/angular/angular.js"></script>
+    <!-- <script src="node_modules/angular/angular.js"></script> -->
     <!-- <script src="clipboard-manager.js"></script> -->
-    <title>Clipboard Manager</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
+    <title>Clipboard Manager v0.0001</title>
   </head>
   <body ng-controller="mainController">
-    <h1>Hello World!</h1>
+    <div class="container">
+    <h1>Clipboard Manager</h1>
+    <p>Use CTRL/CMD+SHIFT+C to save your current clipboard.</p>
+    <table class="table table-hover" id="dasTable">
+    <thead>
+      <tr>
+        <th>Clipboard Contents</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
     <script>
       // receiving events from main process
       require('electron').ipcRenderer.on('copied', function(event, message) {
      console.log(message);
+     appendRow(message);
    });
+
+   function appendRow(text) {
+     var table=document.getElementById("dasTable");
+     var row=table.insertRow(1);
+     var newCell=row.insertCell(0);
+     var newText  = document.createTextNode(text)
+     newCell.appendChild(newText);
+
+      }
     </script>
+    <p> To do:
+    <ul>
+      <li>Save clipboard on a specific shortcut</li>
+      <li>Some electron stuff.</li>
+      <li>Save to localStorage.</li>
+    </ul>
+
+  </div>
   </body>
 </html>
