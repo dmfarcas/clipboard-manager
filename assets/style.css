@@ -1,0 +1,20 @@
+#copied {
+  font-size:40px;
+  color: white;
+  visibility: hidden;
+  background:rgba(0,0,0,0.7);
+  /*border-style: solid;*/
+  width: 140px;
+  height: 60px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-left: -100px;
+  margin-top: -100px;
+}
+
+h1, p, ul, ol, thead, span {
+  cursor: default;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
