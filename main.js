@@ -24,11 +24,14 @@ function createWindow() {
     icon: __dirname + '/images/logo.png'
   });
   mainWindow.loadURL('file://' + __dirname + '/index.html');
+  mainWindow.setMenu(null);
   mainWindow.on('closed', function() {
 
   	 		mainWindow = null;
   		});
 }
+
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
