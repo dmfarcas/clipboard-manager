@@ -44,9 +44,6 @@ function populateTable(text, time) {
   var newText  = document.createTextNode(text);
   textCell.appendChild(newText);
   timeCell.innerHTML = time;
-  if (text === undefined) {
-    return;
-  }
 }
 
 function copyText() {
