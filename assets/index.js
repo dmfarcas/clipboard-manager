@@ -12,8 +12,8 @@ appendRow(message);
 });
 
 
-// Initial database loading
-Doc.find({}).sort({time: 1}).exec(function (err, docs) {
+// Initial database loading + temp bugfix
+Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
   if(err) {
     console.error("Cannot load database.")
   }
@@ -25,7 +25,8 @@ Doc.find({}).sort({time: 1}).exec(function (err, docs) {
 
 function appendRow(text) {
   var time = moment().unix();
-  populateTable(text, moment.unix(time).format("HH:MM:ss"))
+  populateTable(text, moment.unix(time).format("HH:MM:ss"));
+
   Doc.save([ doc, { text: text, time: time } ], function(err, docs) {
     if(err) {
       console.error("Something went wrong while saving data.");
@@ -43,6 +44,9 @@ function populateTable(text, time) {
   var newText  = document.createTextNode(text);
   textCell.appendChild(newText);
   timeCell.innerHTML = time;
+  if (text === undefined) {
+    return;
+  }
 }
 
 function copyText() {
