@@ -1,3 +1,11 @@
+'use strict';
+
+var LinvoDB = require("linvodb3");
+LinvoDB.defaults.store = { db: require("medeadown") };
+LinvoDB.dbPath = process.cwd();
+var Doc = new LinvoDB("doc", { /* schema, can be empty */ })
+var doc = new Doc();
+
 // receiving events from main process
 require('electron').ipcRenderer.on('copied', function(event, message) {
 appendRow(message);
@@ -16,6 +24,11 @@ function appendRow(text) {
   var newText  = document.createTextNode(text);
   newCell.appendChild(newText);
   newCell2.innerHTML = moment().format("HH:MM:ss");
+
+  Doc.save([ doc, { paste: text } ], function(err, docs) {
+
+});
+
 }
 
 
