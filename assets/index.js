@@ -44,7 +44,7 @@ function populateTable(text, time) {
   textCell.setAttribute('contenteditable', 'true');
   textCell.setAttribute('onclick', 'copyText();');
   var newText  = document.createTextNode(text);
-  textCell.appendChild(newText);
+  textCell.innerHTML = text;
   timeCell.innerHTML = time;
 }
 
