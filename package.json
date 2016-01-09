@@ -8,11 +8,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "electron"
+    "clipboard-manager"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/npm/npm.git"
+    "url": "https://github.com/dmfarcas/clipboard-manager"
   },
   "author": "Dan Farcas <dan@farcas.me>",
   "license": "GPL-3.0",

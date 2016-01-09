@@ -3,8 +3,9 @@
 var LinvoDB = require("linvodb3");
 LinvoDB.defaults.store = { db: require("medeadown") };
 LinvoDB.dbPath = process.cwd();
-var Doc = new LinvoDB("doc", { text: String, time: Date})
+var Doc = new LinvoDB("doc", { text: String, time: Date});
 var doc = new Doc();
+
 
 // receiving events from main process
 require('electron').ipcRenderer.on('copied', function(event, message) {
@@ -15,7 +16,7 @@ appendRow(message);
 // Initial database loading + temp bugfix
 Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
   if(err) {
-    console.error("Cannot load database.")
+    console.error("Cannot load database.");
   }
   for (var i = 0; i < docs.length; i++) {
     populateTable(docs[i].text, moment.unix(docs[i].time).format("HH:MM:ss"));
@@ -34,6 +35,7 @@ function appendRow(text) {
   });
 }
 
+
 function populateTable(text, time) {
   var table=document.getElementById('dasTable');
   var row=table.insertRow(1);
@@ -45,6 +47,7 @@ function populateTable(text, time) {
   textCell.appendChild(newText);
   timeCell.innerHTML = time;
 }
+
 
 function copyText() {
   document.execCommand('selectAll',false,null);

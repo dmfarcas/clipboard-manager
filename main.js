@@ -49,13 +49,13 @@ app.on('ready', function() {
   // Show and hide the application
   appIcon.on('click', function() {
 
-    if (mainWindow != null && mainWindow.isVisible()) {
+    if (mainWindow !== null && mainWindow.isVisible()) {
       mainWindow.hide();
     }
-    else if(mainWindow !== null && mainWindow.isVisible() == 0) {
+    else if(mainWindow !== null && mainWindow.isVisible() === 0) {
       mainWindow.show();
     }
-   if(mainWindow == null) {
+   if(mainWindow === null) {
     createWindow();
   }
   });
