@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="assets/style.css" media="screen" title="no title" charset="utf-8">
+    <script src="assets/index.js" charset="utf-8"></script>
+    <script src="node_modules/moment/moment.js" charset="utf-8"></script>
+    <title>Clipboard Manager v0.0001</title>
+  </head>
+  <body>
+    <div class="container">
+    <h1>Clipboard Manager</h1>
+    <p>Use CTRL/CMD+SHIFT+C to save your current clipboard as html formatted text.</p>
+    <p>Use CTRL/CMD+ALT+C to save your current clipboard as plaintext.</p>
+    <p>Click the text to save it to your clipboard. </p>
+
+    <p id="copied">Copied!</p>
+    <table class="table table-hover" id="dasTable">
+    <thead>
+      <tr>
+        <th>Clipboard Contents</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th hidden>This must be here so stuff is added in tbody.</th>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  </body>
+</html>

@@ -61,20 +61,17 @@ app.on('ready', function() {
   });
 
   // Unfortunately, because of an Electron limitation, CTRL + C cannot be captured because it overwrites the system default copy shortcut.
-  var ret = globalShortcut.register('CmdorCtrl+Shift+C', function() {
+  var retHtml = globalShortcut.register('CmdorCtrl+Shift+C', function() {
     mainWindow.webContents.send('copied', clipboard.readHtml());
-    // sends the clipboard to the renderer
   });
-  if (!ret) {
+  if (!retHtml) {
     console.log('registration failed');
   }
 
-
-  var ret = globalShortcut.register('CmdorCtrl+Alt+C', function() {
+  var retPlain = globalShortcut.register('CmdorCtrl+Alt+C', function() {
     mainWindow.webContents.send('copied', clipboard.readText());
-    // sends the clipboard to the renderer
   });
-  if (!ret) {
+  if (!retPlain) {
     console.log('registration failed');
   }
 
