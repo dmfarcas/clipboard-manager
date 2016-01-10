@@ -1,10 +1,16 @@
 'use strict';
 
+// Database
 var LinvoDB = require("linvodb3");
 LinvoDB.defaults.store = { db: require("medeadown") };
 LinvoDB.dbPath = process.cwd();
 var Doc = new LinvoDB("doc", { text: String, time: Date});
 var doc = new Doc();
+
+
+// QR Images
+var qr = require('qr-image');
+var fs = require('fs');
 
 
 // receiving events from main process
@@ -48,6 +54,12 @@ function populateTable(text, time) {
   timeCell.innerHTML = time;
 }
 
+
+function getQR(text) {
+  var code = qr.image(text, { type: 'svg' });
+  var output = fs.createWriteStream('qr.svg');
+
+}
 
 function copyText() {
   document.execCommand('selectAll',false,null);
