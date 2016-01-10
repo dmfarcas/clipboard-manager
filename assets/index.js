@@ -33,7 +33,6 @@ Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (
 function appendRow(text) {
   var time = moment().unix();
   populateTable(text, moment.unix(time).format("HH:MM:ss"));
-
   Doc.save([ doc, { text: text, time: time } ], function(err, docs) {
     if(err) {
       console.error("Something went wrong while saving data.");
@@ -43,15 +42,17 @@ function appendRow(text) {
 
 
 function populateTable(text, time) {
-  var table=document.getElementById('dasTable');
-  var row=table.insertRow(1);
-  var textCell=row.insertCell(0);
-  var timeCell=row.insertCell(1);
-  textCell.setAttribute('contenteditable', 'true');
-  textCell.setAttribute('onclick', 'copyText();');
-  var newText  = document.createTextNode(text);
-  textCell.innerHTML = text;
-  timeCell.innerHTML = time;
+  // var table=document.getElementById('dasTable');
+  // var row=table.insertRow(1);
+  // var textCell=row.insertCell(0);
+  // var timeCell=row.insertCell(1);
+  // textCell.setAttribute('contenteditable', 'true');
+  // textCell.setAttribute('onclick', 'copyText();');
+  // var newText  = document.createTextNode(text);
+  // textCell.innerHTML = text;
+  // timeCell.innerHTML = time;
+  $('#dasTable').prepend('<tr><td>' + text + '</td><td>' + time +'</td></tr>');
+
 }
 
 
@@ -68,3 +69,8 @@ function copyText() {
   document.getElementById('copied').style.visibility = "visible";
   setTimeout(function(){ document.getElementById('copied').style.visibility = "hidden"; }, 300);
 }
+
+
+$(function() {
+
+});
