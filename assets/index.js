@@ -42,17 +42,11 @@ function appendRow(text) {
 
 
 function populateTable(text, time) {
-  // var table=document.getElementById('dasTable');
-  // var row=table.insertRow(1);
-  // var textCell=row.insertCell(0);
-  // var timeCell=row.insertCell(1);
-  // textCell.setAttribute('contenteditable', 'true');
-  // textCell.setAttribute('onclick', 'copyText();');
-  // var newText  = document.createTextNode(text);
-  // textCell.innerHTML = text;
-  // timeCell.innerHTML = time;
   $('#dasTable').prepend('<tr><td>' + text + '</td><td>' + time +'</td></tr>');
-
+  $("td").closest('tr').children('td:eq(0)').click(function(){
+    console.log($(this).text());
+    copyText();
+  });
 }
 
 
@@ -62,15 +56,11 @@ function getQR(text) {
 
 }
 
+
 function copyText() {
-  document.execCommand('selectAll',false,null);
+  // The following selects EVERYTHING for some reason:
+  // document.execCommand('selectAll',false,null);
   document.execCommand('Copy', false, null);
-  // too lazy to use jQuery
-  document.getElementById('copied').style.visibility = "visible";
-  setTimeout(function(){ document.getElementById('copied').style.visibility = "hidden"; }, 300);
+  $('#copied').fadeIn("fast");
+  setTimeout(function(){ $('#copied').css({"display":"none"}); }, 300);
 }
-
-
-$(function() {
-
-});

@@ -1,7 +1,7 @@
 #copied {
   font-size:40px;
   color: white;
-  visibility: hidden;
+  display: none;
   background:rgba(0,0,0,0.7);
   /*border-style: solid;*/
   width: 140px;
