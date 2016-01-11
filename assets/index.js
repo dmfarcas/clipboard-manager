@@ -19,15 +19,38 @@ appendRow(message);
 });
 
 
+let method = (function() {
+  let delRow = function(id) {
+    // Doc.remove({ _id: id }, {}, function (err, numRemoved) {
+      console.log("This is the item's ID that will be deleted: " + id);
+// });
+    init();
+  };
+  let updateRow = function() {
+    console.log("This is the update function.");
+  };
+  let qrcode = function() {
+    console.log("This is the qrcode function.");
+  };
+  return {
+    delRow: delRow,
+    updateRow: updateRow,
+    qrcode: qrcode
+  };
+})();
+
 // Initial database loading + temp bugfix
-Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
-  if(err) {
-    console.error("Cannot load database.");
-  }
-  for (var i = 0; i < docs.length; i++) {
-    populateTable(docs[i].text, moment.unix(docs[i].time).format("HH:MM:ss"));
-  }
-});
+function init () {
+  Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
+    if(err) {
+      console.error("Cannot load database.");
+    }
+    for (var i = 0; i < docs.length; i++) {
+      populateTable(docs[i].text, moment.unix(docs[i].time).format("HH:MM:ss"), docs[i]._id);
+    }
+  });
+}
+init();
 
 
 function appendRow(text) {
@@ -41,7 +64,7 @@ function appendRow(text) {
 }
 
 
-function populateTable(text, time) {
+function populateTable(text, time, id) {
   $('#dasTable').prepend('<tr><td>' + text +
                                                     '</td><td>' +
                                                     '<i class="fa fa-pencil"></i>' +
@@ -49,8 +72,10 @@ function populateTable(text, time) {
                                                     '<i class="fa fa-trash-o"></i>' +
                                                     '</td><td>' +
                                                     time +
+                                                    '</td><td hidden>' +
+                                                    id +                                                                // a hidden ID is needed for update and delete functions
                                                     '</td></tr>');
-  $("i").addClass("hidden");                                                
+  $("i").addClass("hidden");
   $("td").closest('tr').children('td:eq(0)').click(function(){
     copyText();
   });
@@ -58,12 +83,13 @@ function populateTable(text, time) {
       $(this).find("i").removeClass("hidden");
   }, function() {
     $(this).find("i").addClass("hidden");
-  }
-);
+  });
+  $(".fa-trash-o").click(function(){
+    let id = $(this).closest('tr').find('td:nth-child(4)').text();
+    method.delRow(id);
+  });
+
 }
-
-
-
 
 
 // function getQR(text) {
@@ -73,8 +99,6 @@ function populateTable(text, time) {
 
 
 function copyText() {
-  // The following selects EVERYTHING for some reason:
-  // document.execCommand('selectAll',false,null);
   document.execCommand('Copy', false, null);
   $('#copied').fadeIn("fast");
   setTimeout(function(){ $('#copied').css({"display":"none"}); }, 400);
