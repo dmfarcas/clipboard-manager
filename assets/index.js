@@ -42,19 +42,34 @@ function appendRow(text) {
 
 
 function populateTable(text, time) {
-  $('#dasTable').prepend('<tr><td>' + text + '</td><td>' + time +'</td></tr>');
+  $('#dasTable').prepend('<tr><td>' + text +
+                                                    '</td><td>' +
+                                                    '<i class="fa fa-pencil"></i>' +
+                                                    '<i class="fa fa-qrcode"></i>' +
+                                                    '<i class="fa fa-trash-o"></i>' +
+                                                    '</td><td>' +
+                                                    time +
+                                                    '</td></tr>');
+  $("i").addClass("hidden");                                                
   $("td").closest('tr').children('td:eq(0)').click(function(){
-    console.log($(this).text());
     copyText();
   });
+  $("tr").hover(function() {
+      $(this).find("i").removeClass("hidden");
+  }, function() {
+    $(this).find("i").addClass("hidden");
+  }
+);
 }
 
 
-function getQR(text) {
-  var code = qr.image(text, { type: 'svg' });
-  var output = fs.createWriteStream('qr.svg');
 
-}
+
+
+// function getQR(text) {
+//   var code = qr.image(text, { type: 'svg' });
+//   var output = fs.createWriteStream('qr.svg');
+// }
 
 
 function copyText() {
@@ -62,5 +77,5 @@ function copyText() {
   // document.execCommand('selectAll',false,null);
   document.execCommand('Copy', false, null);
   $('#copied').fadeIn("fast");
-  setTimeout(function(){ $('#copied').css({"display":"none"}); }, 300);
+  setTimeout(function(){ $('#copied').css({"display":"none"}); }, 400);
 }

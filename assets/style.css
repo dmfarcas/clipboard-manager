@@ -2,9 +2,10 @@
   font-size:40px;
   color: white;
   display: none;
+  border-radius: 4px;
   background:rgba(0,0,0,0.7);
   /*border-style: solid;*/
-  width: 140px;
+  width: 145px;
   height: 60px;
   position: fixed;
   top: 50%;
@@ -13,8 +14,32 @@
   margin-top: -100px;
 }
 
-h1, p, ul, ol, thead, span {
+
+i {
+  font-size:20px !important;
+  color: #BABABA;
+  letter-spacing: 5px;
+}
+
+#functions {
+  width: 80px;
+}
+
+tr {
+  height: 40px;
+}
+
+i:hover {
+  color:black;
+}
+
+h1, p, ul, ol, thead, span, tr {
   cursor: default;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
+}
+
+
+.hidden {
+  visibility: hidden;
 }

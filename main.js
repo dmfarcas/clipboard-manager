@@ -19,8 +19,9 @@ app.on('window-all-closed', function() {
 
 // Create a window!
 function createWindow() {
-  mainWindow = new BrowserWindow({width: 800,
-    height: 600,
+  mainWindow = new BrowserWindow({width: 1003,
+    height: 750,
+    minWidth: 1000,
     icon: __dirname + '/images/logo.png'
   });
   mainWindow.loadURL('file://' + __dirname + '/index.html');
