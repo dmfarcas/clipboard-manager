@@ -21,9 +21,9 @@ appendRow(message);
 
 let method = (function() {
   let delRow = function(id) {
-    // Doc.remove({ _id: id }, {}, function (err, numRemoved) {
+    Doc.remove({ _id: id }, {}, function (err, numRemoved) {
       console.log("This is the item's ID that will be deleted: " + id);
-// });
+});
     init();
   };
   let updateRow = function() {
@@ -41,6 +41,7 @@ let method = (function() {
 
 // Initial database loading + temp bugfix
 function init () {
+  $(".container").load("index.html");
   Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
     if(err) {
       console.error("Cannot load database.");
@@ -84,7 +85,7 @@ function populateTable(text, time, id) {
   }, function() {
     $(this).find("i").addClass("hidden");
   });
-  $(".fa-trash-o").click(function(){
+  $(".fa-trash-o").unbind().click(function(){
     let id = $(this).closest('tr').find('td:nth-child(4)').text();
     method.delRow(id);
   });
