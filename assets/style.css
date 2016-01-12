@@ -1,37 +1,23 @@
-#copied {
-  font-size:40px;
-  color: white;
-  display: none;
-  border-radius: 4px;
-  background:rgba(0,0,0,0.7);
-  /*border-style: solid;*/
-  width: 145px;
-  height: 60px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  margin-left: -100px;
-  margin-top: -100px;
-}
-
-
 i {
   font-size:20px !important;
-  color: #BABABA;
+  color: #D9D9D9;
   letter-spacing: 5px;
 }
 
-#functions {
-  width: 80px;
-}
-
-tr {
-  height: 40px;
-}
-
 i:hover {
-  color:black;
+  color:#808080;
 }
+
+#contents {
+  width: 90%;
+}
+
+
+/*tr {
+  height: 40px;
+}*/
+
+
 
 h1, p, ul, ol, thead, span, tr {
   cursor: default;

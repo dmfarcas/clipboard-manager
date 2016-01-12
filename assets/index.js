@@ -7,15 +7,16 @@ LinvoDB.dbPath = process.cwd();
 var Doc = new LinvoDB("doc", { text: String, time: Date});
 var doc = new Doc();
 
+const clipboard = require('electron').clipboard;
 
-// QR Images
-var qr = require('qr-image');
-var fs = require('fs');
+// QR Imagconst clipboard = require('electron').clipboard;
+// var qr = require('qr-image');
+// var fs = require('fs');
 
 
 // receiving events from main process
 require('electron').ipcRenderer.on('copied', function(event, message) {
-appendRow(message);
+  appendRow(message);
 });
 
 
@@ -23,11 +24,10 @@ let method = (function() {
   let delRow = function(id) {
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
       console.log("This is the item's ID that will be deleted: " + id);
-});
-    init();
+    });
   };
-  let updateRow = function() {
-    console.log("This is the update function.");
+  let updateRow = function(id) {
+    console.log("This is the update function." + id);
   };
   let qrcode = function() {
     console.log("This is the qrcode function.");
@@ -40,24 +40,23 @@ let method = (function() {
 })();
 
 // Initial database loading + temp bugfix
-function init () {
-  $(".container").load("index.html");
-  Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
-    if(err) {
-      console.error("Cannot load database.");
-    }
-    for (var i = 0; i < docs.length; i++) {
-      populateTable(docs[i].text, moment.unix(docs[i].time).format("HH:MM:ss"), docs[i]._id);
-    }
-  });
-}
-init();
+
+Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
+  if(err) {
+    console.error("Cannot load database.");
+  }
+  for (var i = 0; i < docs.length; i++) {
+    populateTable(docs[i].text, moment.unix(docs[i].time).format("HH:MM:ss"), docs[i]._id);
+  }
+});
+
 
 
 function appendRow(text) {
   var time = moment().unix();
-  populateTable(text, moment.unix(time).format("HH:MM:ss"));
   Doc.save([ doc, { text: text, time: time } ], function(err, docs) {
+    populateTable(docs[1].text, moment.unix(time).format("HH:MM:ss"), docs[1]._id);
+    console.log("The id: " + docs[1]._id);
     if(err) {
       console.error("Something went wrong while saving data.");
     }
@@ -78,18 +77,24 @@ function populateTable(text, time, id) {
                                                     '</td></tr>');
   $("i").addClass("hidden");
   $("td").closest('tr').children('td:eq(0)').click(function(){
-    copyText();
+    let currText = $(this).text();
+    copyText(currText);
   });
   $("tr").hover(function() {
       $(this).find("i").removeClass("hidden");
   }, function() {
     $(this).find("i").addClass("hidden");
   });
+  // Remove row function
   $(".fa-trash-o").unbind().click(function(){
     let id = $(this).closest('tr').find('td:nth-child(4)').text();
+    $(this).closest('tr').remove();
     method.delRow(id);
   });
-
+  $(".fa-pencil").unbind().click(function(){
+    let id = $(this).closest('tr').find('td:nth-child(4)').text();
+    method.updateRow(id);
+  });
 }
 
 
@@ -99,8 +104,16 @@ function populateTable(text, time, id) {
 // }
 
 
-function copyText() {
-  document.execCommand('Copy', false, null);
-  $('#copied').fadeIn("fast");
-  setTimeout(function(){ $('#copied').css({"display":"none"}); }, 400);
+function copyText(text) {
+  clipboard.writeText(text);
+
+  Materialize.toast('Copied to clipboard!', 2000)
 }
+
+
+$(function() {
+  $(".hider").click(function() {
+    $('.cardcontainer').hide();
+    console.log("Yep");
+  });
+});

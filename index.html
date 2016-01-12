@@ -2,23 +2,39 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="assets/style.css" media="screen" title="no title" charset="utf-8">
     <script src="node_modules/jquery/dist/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="node_modules/materialize-css/js/hammer.min.js" onload="window.Hammer = module.exports;" charset="utf-8"></script>
+    <script src="node_modules/materialize-css/dist/js/materialize.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" media="screen" title="no title" charset="utf-8">
     <script src="assets/index.js" charset="utf-8"></script>
     <script src="node_modules/moment/moment.js" charset="utf-8"></script>
     <title>Clipboard Manager</title>
   </head>
   <body>
-    <div class="container">
-    <h1>Clipboard Manager</h1>
-    <p>Use CTRL/CMD+SHIFT+C to save your current clipboard as formatted text.</p>
-    <p>Use CTRL/CMD+ALT+C to save your current clipboard as plain text.</p>
-    <p>Click the text to save it to your clipboard. </p>
-
-    <p id="copied">Copied!</p>
-    <table class="table table-striped" id="dasTable">
+      <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo left">Clipboard Manager</a>
+    </div>
+  </nav>
+  <div class="row cardcontainer">
+  <div class="col s6 m12">
+    <div class="card grey darken-1">
+      <div class="card-content white-text">
+        <span class="card-title">Read me!</span>
+        <p>Use CTRL/CMD+SHIFT+C to save your current clipboard as formatted text.</p>
+        <p>Use CTRL/CMD+ALT+C to save your current clipboard as plain text.</p>
+        <p>Click the text to save it to your clipboard. </p>
+      </div>
+      <div class="card-action">
+        <a href="#" class="hider">Got it</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div>
+    <table class="centered striped" id="dasTable">
     <thead>
       <tr>
         <th id="contents">Clipboard Contents</th>
@@ -32,6 +48,6 @@
       </tr>
     </tbody>
   </table>
-  </div>
+</div>
   </body>
 </html>

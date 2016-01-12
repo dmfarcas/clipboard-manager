@@ -17,7 +17,6 @@
   "author": "Dan Farcas <dan@farcas.me>",
   "license": "GPL-3.0",
   "dependencies": {
-    "bootstrap": "^3.3.6",
     "electron-prebuilt": "^0.36.1",
     "font-awesome": "^4.5.0",
     "jquery": "^2.2.0",

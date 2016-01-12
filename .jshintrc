@@ -1,4 +1,10 @@
 {
   "esnext": true,
-  "node": true
+  "node": true,
+  "globals": {
+    "$": false,
+    "jQuery": false,
+    "moment": false,
+    "document": false
+  }
 }
