@@ -9,17 +9,19 @@ i:hover {
 }
 
 #contents {
-  width: 90%;
+  width: 100%;
 }
 
-
+#qrImg {
+  width: 60%;
+}
 /*tr {
   height: 40px;
 }*/
 
 
 
-h1, p, ul, ol, thead, span, tr {
+body {
   cursor: default;
   -webkit-touch-callout: none;
   -webkit-user-select: none;

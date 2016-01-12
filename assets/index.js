@@ -23,10 +23,14 @@ require('electron').ipcRenderer.on('copied', function(event, message) {
 let method = (function() {
   let delRow = function(id) {
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
+      doc.save(function(err) { /* saving the document */ });
       console.log("This is the item's ID that will be deleted: " + id);
     });
   };
-  let updateRow = function(id) {
+  let updateRow = function(id, text) {
+    Doc.update({ _id: id }, { $set: { text: text } }, function (err, numReplaced) {
+      doc.save(function(err) { /* saving the document */ });
+});
     console.log("This is the update function." + id);
   };
   let qrcode = function() {
@@ -65,6 +69,7 @@ function appendRow(text) {
 
 
 function populateTable(text, time, id) {
+  // to do: populate table with \n as well
   $('#dasTable').prepend('<tr><td>' + text +
                                                     '</td><td>' +
                                                     '<i class="fa fa-pencil"></i>' +
@@ -91,29 +96,35 @@ function populateTable(text, time, id) {
     $(this).closest('tr').remove();
     method.delRow(id);
   });
+  // Update function
   $(".fa-pencil").unbind().click(function(){
     let id = $(this).closest('tr').find('td:nth-child(4)').text();
-    method.updateRow(id);
+    let editText = $(this).closest('tr').find('td:nth-child(1)').text();
+    let self = this;
+    $('#editContent').openModal();
+    $("#modalContent").val(editText);
+    $("#modalContent").trigger('autoresize');
+    //Update database when done is clicked
+    $('#editDone').unbind().click(function() {
+      let newText = $("#modalContent").val();
+      method.updateRow(id, newText);
+      $(self).closest('tr').find('td:nth-child(1)').text(newText);
+      $('#editContent').closeModal();
+    });
   });
+  //QR Code goes here...
 }
 
 
-// function getQR(text) {
-//   var code = qr.image(text, { type: 'svg' });
-//   var output = fs.createWriteStream('qr.svg');
-// }
-
-
+// to fix: some write text things eg. the clipboard writes only unformatted text
 function copyText(text) {
   clipboard.writeText(text);
-
-  Materialize.toast('Copied to clipboard!', 2000)
+  Materialize.toast('Copied to clipboard!', 2000);
 }
 
 
 $(function() {
   $(".hider").click(function() {
     $('.cardcontainer').hide();
-    console.log("Yep");
   });
 });

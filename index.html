@@ -14,13 +14,13 @@
   </head>
   <body>
       <nav>
-    <div class="nav-wrapper">
+    <div class="nav-wrapper  light-blue lighten-2">
       <a href="#" class="brand-logo left">Clipboard Manager</a>
     </div>
   </nav>
   <div class="row cardcontainer">
   <div class="col s6 m12">
-    <div class="card grey darken-1">
+    <div class="card grey darken-1 z-depth-2">
       <div class="card-content white-text">
         <span class="card-title">Read me!</span>
         <p>Use CTRL/CMD+SHIFT+C to save your current clipboard as formatted text.</p>
@@ -49,5 +49,26 @@
     </tbody>
   </table>
 </div>
+  <div id="editContent" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Edit Paste Contents</h4>
+      <textarea rows="15" id="modalContent"></textarea>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" id="editDone" class=" modal-action modal-close waves-effect waves-green btn-flat teal white-text">Done</a>
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
+    </div>
+  </div>
+
+  <div id="qrCode" class="modal">
+    <div class="modal-content">
+      <h4>QR Code</h4>
+      <img id="qrImg"  class="valign-wrapper responsive-img" src="http://www.omnipearl.com/images/QRCode.png">
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Done</a>
+    </div>
+  </div>
+
   </body>
 </html>
