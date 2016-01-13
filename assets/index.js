@@ -8,7 +8,7 @@ var Doc = new LinvoDB("doc", { text: String, time: Date});
 var doc = new Doc();
 
 const clipboard = require('electron').clipboard;
-
+const shell = require('electron').shell;
 // QR Imagconst clipboard = require('electron').clipboard;
 // var qr = require('qr-image');
 // var fs = require('fs');
@@ -33,7 +33,7 @@ let method = (() => {
 });
     console.log("This is the update function." + id);
   };
-  let qrcode = function() {
+  let qrcode = () => {
     console.log("This is the qrcode function.");
   };
   return {
@@ -46,7 +46,10 @@ let method = (() => {
 // Initial database loading + temp bugfix
 function init() {
   // Why am I doing this to myself... Oh well:
-  $("#settings").hide();
+  $('.brand-logo').text("Clipboard Manager");
+  $('.button-collapse').sideNav('hide');
+  $('#settings').hide();
+  $("#container").html("");
   $( "<table id=\"dasTable\"></table>" ).appendTo( "#container" );
   $("#dasTable").addClass("centered striped");
   $("<thead></thead").appendTo("#dasTable");
@@ -60,23 +63,17 @@ function init() {
    $("<tr></tr>").appendTo("tbody");
   Doc.find({}).sort({time: 1})
   .filter(e => (e.text !== undefined))
-  .map(res => {populateTable(res.text, moment.unix(res.time).format("HH:MM:ss"), res._id);})
+  .map(res => {populateTable(res.text, moment.unix(res.time).format($("#time").val()), res._id);})
   .exec(function(err, res) {
   });
 }
 
 
-function home() {
-  $('.button-collapse').sideNav('hide');
-  $("#settings").hide();
-  $("#container").show();
-}
-
-
 function settings() {
-  $("#container").hide();
+  $("#container").html("");
   $('.button-collapse').sideNav('hide');
   $('#settings').show();
+  $('.brand-logo').text("Settings");
 }
 
 
@@ -105,7 +102,7 @@ function populateTable(text, time, id) {
                                                     id +                                                                // a hidden ID is needed for update and delete functions
                                                     '</td></tr>');
   $(".controlIcons").addClass("hidden");
-  $("td").closest('tr').children('td:eq(0)').click(function(){
+  $("td").closest('tr').children('td:eq(0)').click(function() {
     let currText = $(this).text();
     copyText(currText);
   });
@@ -115,30 +112,30 @@ function populateTable(text, time, id) {
     $(this).find(".controlIcons").addClass("hidden");
   });
   // Remove row function
-  $(".fa-trash-o").unbind().click(function(){
+  $(".fa-trash-o").unbind().click(function() {
     let id = $(this).closest('tr').find('td:nth-child(4)').text();
     $(this).closest('tr').remove();
     method.delRow(id);
     Materialize.toast('Deleted!', 2000);
   });
   // Update function
-  $(".fa-pencil").unbind().click(function(e){
-    e.stopImmediatePropagation();
-    let id = $(this).closest('tr').find('td:nth-child(4)').text();
-    let editText = $(this).closest('tr').find('td:nth-child(1)').text();
-    let self = this;
-    $('#editContent').openModal();
-    $("#modalContent").val(editText);
-    $("#modalContent").trigger('autoresize');
-    //Update database when done is clicked
-    $('#editDone').unbind().click(function() {
-      let newText = $("#modalContent").val();
-      method.updateRow(id, newText);
-      $(self).closest('tr').find('td:nth-child(1)').text(newText);
-      $('#editContent').closeModal();
-      Materialize.toast('Done!', 2000);
-    });
-  });
+ $(".fa-pencil").unbind().click(function(e){
+   e.stopImmediatePropagation();
+   let id = $(this).closest('tr').find('td:nth-child(4)').text();
+   let editText = $(this).closest('tr').find('td:nth-child(1)').text();
+   let self = this;
+   $('#editContent').openModal();
+   $("#modalContent").val(editText);
+   $("#modalContent").trigger('autoresize');
+   //Update database when done is clicked
+   $('#editDone').unbind().click(function() {
+     let newText = $("#modalContent").val();
+     method.updateRow(id, newText);
+     $(self).closest('tr').find('td:nth-child(1)').text(newText);
+     $('#editContent').closeModal();
+     Materialize.toast('Done!', 2000);
+   });
+ });
   //QR Code goes here...
 }
 
@@ -150,11 +147,15 @@ function copyText(text) {
 }
 
 
-$(function() {
+$(() => {
   init();
-  $(".hider").click(function() {
+  $(".hider").click(() => {
     $('.cardcontainer').hide();
   });
   $(".button-collapse").sideNav();
-
+  $( "#time" ).val("HH:MM:ss").hide();
+  $("#advTime").click(() => {
+    $("#time").show();
+    $("#advTime").hide(200);
+  });
 });

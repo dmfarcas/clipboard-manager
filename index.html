@@ -37,24 +37,34 @@
 </div>
 
     <ul id="slide-out" class="side-nav">
-      <li><a onclick="home(); return false;"><i class="fa fa-home"></i>  Home</a></li>
+      <li><a onclick="init(); return false;"><i class="fa fa-home"></i>  Home</a></li>
       <li><a onclick="settings(); return false;"><i class="fa fa-cog"></i>  Settings</a></li>
    </ul>
 <div id="container"> </div>
-<div id="settings" class="container">
-  <h1>Settings</h1>
-</div>
-  <div id="editContent" class="modal bottom-sheet">
-    <div class="modal-content">
-      <h4>Edit Paste Contents</h4>
-      <textarea rows="15" id="modalContent" class="materialize-textarea"></textarea>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" id="editDone" class=" modal-action modal-close waves-effect waves-green btn-flat teal white-text">Done</a>
-      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
-    </div>
-  </div>
+<div id="settings" class="container row">
+  <h4 class="header">Time format</h2>
+  <p>Clipboard Manager stores time as Unix time in a database and formats it using Moment.js. You can create your own string. Please check the <a onclick="shell.openExternal('http://momentjs.com/docs/#/displaying/format/');"> documentation.</a></p>
+  <div class="row">
 
+    <a class="waves-effect waves-light btn" id="advTime">I know what I'm doing, let me write a string!</a>
+        <div class="input-field col s6">
+
+          <input placeholder="HH:MM:ss" type="text" class="validate" id="time">
+        </div>
+</div>
+<h4 class="header" class="row">Change hotkeys</h2>
+  <p>Any combination can be used, pretty much. Except the system wide copy shortcut. Electron's behavior is to make the shortcut exclusive for itself. If you choose CTRL - C, for example, your system's copy shortcut will not work.</p>
+</div>
+<div id="editContent" class="modal bottom-sheet">
+  <div class="modal-content">
+    <h4>Edit Paste Contents</h4>
+    <textarea rows="15" id="modalContent" class="materialize-textarea"></textarea>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" id="editDone" class=" modal-action modal-close waves-effect waves-green btn-flat teal white-text">Done</a>
+    <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
+  </div>
+</div>
   <div id="qrCode" class="modal">
     <div class="modal-content">
       <h4>QR Code</h4>
