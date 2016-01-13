@@ -20,7 +20,7 @@ require('electron').ipcRenderer.on('copied', function(event, message) {
 });
 
 
-let method = (function() {
+let method = (() => {
   let delRow = function(id) {
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
       doc.save(function(err) { /* saving the document */ });
@@ -44,16 +44,40 @@ let method = (function() {
 })();
 
 // Initial database loading + temp bugfix
+function init() {
+  // Why am I doing this to myself... Oh well:
+  $("#settings").hide();
+  $( "<table id=\"dasTable\"></table>" ).appendTo( "#container" );
+  $("#dasTable").addClass("centered striped");
+  $("<thead></thead").appendTo("#dasTable");
+   $("<tr></tr>").appendTo("thead");
+   $("<th id=\"contents\"></th>").appendTo("tr").text("Contents");
+   $("<th id=\"functions\"></th>").appendTo("tr").text("");
+   // Is there such a thing as too much jQuery?
+   $("<th></th>").appendTo("tr").text("Time");
+   $("<th hidden></th>").appendTo("tr").text("");
+   $("<tbody></tbody>").appendTo("#dasTable");
+   $("<tr></tr>").appendTo("tbody");
+  Doc.find({}).sort({time: 1})
+  .filter(e => (e.text !== undefined))
+  .map(res => {populateTable(res.text, moment.unix(res.time).format("HH:MM:ss"), res._id);})
+  .exec(function(err, res) {
+  });
+}
 
-Doc.find({}).sort({time: 1}).filter(e => (e.text !== undefined)).exec(function (err, docs) {
-  if(err) {
-    console.error("Cannot load database.");
-  }
-  for (var i = 0; i < docs.length; i++) {
-    populateTable(docs[i].text, moment.unix(docs[i].time).format("HH:MM:ss"), docs[i]._id);
-  }
-});
 
+function home() {
+  $('.button-collapse').sideNav('hide');
+  $("#settings").hide();
+  $("#container").show();
+}
+
+
+function settings() {
+  $("#container").hide();
+  $('.button-collapse').sideNav('hide');
+  $('#settings').show();
+}
 
 
 function appendRow(text) {
@@ -72,32 +96,34 @@ function populateTable(text, time, id) {
   // to do: populate table with \n as well
   $('#dasTable').prepend('<tr><td>' + text +
                                                     '</td><td>' +
-                                                    '<i class="fa fa-pencil"></i>' +
-                                                    '<i class="fa fa-qrcode"></i>' +
-                                                    '<i class="fa fa-trash-o"></i>' +
+                                                    '<i class="controlIcons fa fa-pencil"></i>' +
+                                                    '<i class="controlIcons fa fa-qrcode"></i>' +
+                                                    '<i class="controlIcons fa fa-trash-o"></i>' +
                                                     '</td><td>' +
                                                     time +
                                                     '</td><td hidden>' +
                                                     id +                                                                // a hidden ID is needed for update and delete functions
                                                     '</td></tr>');
-  $("i").addClass("hidden");
+  $(".controlIcons").addClass("hidden");
   $("td").closest('tr').children('td:eq(0)').click(function(){
     let currText = $(this).text();
     copyText(currText);
   });
   $("tr").hover(function() {
-      $(this).find("i").removeClass("hidden");
+      $(this).find(".controlIcons").removeClass("hidden");
   }, function() {
-    $(this).find("i").addClass("hidden");
+    $(this).find(".controlIcons").addClass("hidden");
   });
   // Remove row function
   $(".fa-trash-o").unbind().click(function(){
     let id = $(this).closest('tr').find('td:nth-child(4)').text();
     $(this).closest('tr').remove();
     method.delRow(id);
+    Materialize.toast('Deleted!', 2000);
   });
   // Update function
-  $(".fa-pencil").unbind().click(function(){
+  $(".fa-pencil").unbind().click(function(e){
+    e.stopImmediatePropagation();
     let id = $(this).closest('tr').find('td:nth-child(4)').text();
     let editText = $(this).closest('tr').find('td:nth-child(1)').text();
     let self = this;
@@ -110,6 +136,7 @@ function populateTable(text, time, id) {
       method.updateRow(id, newText);
       $(self).closest('tr').find('td:nth-child(1)').text(newText);
       $('#editContent').closeModal();
+      Materialize.toast('Done!', 2000);
     });
   });
   //QR Code goes here...
@@ -124,7 +151,10 @@ function copyText(text) {
 
 
 $(function() {
+  init();
   $(".hider").click(function() {
     $('.cardcontainer').hide();
   });
+  $(".button-collapse").sideNav();
+
 });

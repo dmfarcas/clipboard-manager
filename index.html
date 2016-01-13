@@ -7,6 +7,7 @@
     <script src="node_modules/jquery/dist/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
     <script src="node_modules/materialize-css/js/hammer.min.js" onload="window.Hammer = module.exports;" charset="utf-8"></script>
     <script src="node_modules/materialize-css/dist/js/materialize.min.js" charset="utf-8"></script>
+    <script src="node_modules/handlebars/dist/handlebars.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" media="screen" title="no title" charset="utf-8">
     <script src="assets/index.js" charset="utf-8"></script>
     <script src="node_modules/moment/moment.js" charset="utf-8"></script>
@@ -15,7 +16,8 @@
   <body>
       <nav>
     <div class="nav-wrapper  light-blue lighten-2">
-      <a href="#" class="brand-logo left">Clipboard Manager</a>
+      <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
+      <a class="brand-logo center">Clipboard Manager</a>
     </div>
   </nav>
   <div class="row cardcontainer">
@@ -33,26 +35,19 @@
     </div>
   </div>
 </div>
-<div>
-    <table class="centered striped" id="dasTable">
-    <thead>
-      <tr>
-        <th id="contents">Clipboard Contents</th>
-        <th id="functions"></th>
-        <th>Time</th>
-        <th hidden></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-      </tr>
-    </tbody>
-  </table>
+
+    <ul id="slide-out" class="side-nav">
+      <li><a onclick="home(); return false;"><i class="fa fa-home"></i>  Home</a></li>
+      <li><a onclick="settings(); return false;"><i class="fa fa-cog"></i>  Settings</a></li>
+   </ul>
+<div id="container"> </div>
+<div id="settings" class="container">
+  <h1>Settings</h1>
 </div>
   <div id="editContent" class="modal bottom-sheet">
     <div class="modal-content">
       <h4>Edit Paste Contents</h4>
-      <textarea rows="15" id="modalContent"></textarea>
+      <textarea rows="15" id="modalContent" class="materialize-textarea"></textarea>
     </div>
     <div class="modal-footer">
       <a href="#!" id="editDone" class=" modal-action modal-close waves-effect waves-green btn-flat teal white-text">Done</a>
