@@ -22,7 +22,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({width: 1003,
     height: 750,
     minWidth: 1000,
-    icon: __dirname + '/images/logo.png'
+    icon: __dirname + '/assets/images/logo.png'
   });
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   // mainWindow.setMenu(null);
@@ -41,7 +41,7 @@ app.on('ready', function() {
   createWindow();
 
   // Create a tray icon
-  appIcon = new Tray('images/logo.png');
+  appIcon = new Tray('assets/images/logo.png');
   appIcon.setToolTip('Clipboard Manager.');
 
 
@@ -76,9 +76,12 @@ app.on('ready', function() {
     console.log('registration failed');
   }
 
+  app.commandLine.appendSwitch('disable-cached-picture-raster');
+
+
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {

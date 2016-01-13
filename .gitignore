@@ -34,5 +34,7 @@ node_modules
 .node_repl_history
 
 # Database
-
 doc.db
+
+# Leftover QR stuff
+assets/images/qr_code.svg

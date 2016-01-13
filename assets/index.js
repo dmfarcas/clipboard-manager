@@ -9,10 +9,6 @@ var doc = new Doc();
 
 const clipboard = require('electron').clipboard;
 const shell = require('electron').shell;
-// QR Imagconst clipboard = require('electron').clipboard;
-// var qr = require('qr-image');
-// var fs = require('fs');
-
 
 // receiving events from main process
 require('electron').ipcRenderer.on('copied', function(event, message) {
@@ -21,21 +17,26 @@ require('electron').ipcRenderer.on('copied', function(event, message) {
 
 
 let method = (() => {
-  let delRow = function(id) {
+  let delRow = (id) => {
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
       doc.save(function(err) { /* saving the document */ });
       console.log("This is the item's ID that will be deleted: " + id);
     });
   };
-  let updateRow = function(id, text) {
+  let updateRow = (id, text) => {
     Doc.update({ _id: id }, { $set: { text: text } }, function (err, numReplaced) {
       doc.save(function(err) { /* saving the document */ });
 });
     console.log("This is the update function." + id);
   };
-  let qrcode = () => {
-    console.log("This is the qrcode function.");
+  let qrcode = (text) => {
+    let fs = require('fs');
+    let qr = require('qr-image');
+    let qr_svg = qr.image(text, { type: 'svg' });
+    qr_svg.pipe(fs.createWriteStream('assets/images/qr_code.svg'));
+    console.log("This is the qrcode function." + text);
   };
+
   return {
     delRow: delRow,
     updateRow: updateRow,
@@ -136,7 +137,18 @@ function populateTable(text, time, id) {
      Materialize.toast('Done!', 2000);
    });
  });
-  //QR Code goes here...
+
+   $(".fa-qrcode").unbind().click(function() {
+     let text = $(this).closest('tr').find('td:nth-child(1)').text();
+     method.qrcode(text);
+     $("#qrimg").hide();
+     $('#qrcode').openModal();
+     // Poor man's promise
+     setTimeout(() => {
+       $("#qrimg").attr("src", "assets/images/qr_code.svg?"+ Math.random());
+       $("#qrimg").show();
+     }, 100);
+   });
 }
 
 
