@@ -40,13 +40,26 @@
       <li><a onclick="init(); return false;"><i class="fa fa-home"></i>  Home</a></li>
       <li><a onclick="settings(); return false;"><i class="fa fa-cog"></i>  Settings</a></li>
    </ul>
+
+<div class="row" id="searchbar">
+  <form class="col s12">
+    <div class="row">
+      <div class="input-field col s11">
+        <i class="fa fa-search prefix"></i>
+        <input id="search" type="text" class="validate">
+        <label for="search">Search </label>
+      </div>
+      <span><a class="btn-floating btn-small waves-effect waves-light red" id="clearform"><i class="fa fa-minus-circle"></i></a></span>
+    </div>
+  </form>
+</div>
 <div id="container"> </div>
 <div id="settings" class="container row">
   <h4 class="header">Time format</h2>
   <p>Clipboard Manager stores time as Unix time in a database and formats it using Moment.js. You can create your own string. Please check the <a onclick="shell.openExternal('http://momentjs.com/docs/#/displaying/format/');"> documentation.</a></p>
   <div class="row">
 
-    <a class="waves-effect waves-light btn" id="advTime">I know what I'm doing, let me write a string!</a>
+    <a class="waves-effect waves-light btn" id="advTime">I read the documentation, let me write a string!</a>
         <div class="input-field col s6">
 
           <input placeholder="HH:MM:ss" type="text" class="validate" id="time">
@@ -68,7 +81,7 @@
   <div id="qrcode" class="modal">
     <div class="modal-content">
       <h4>QR Code</h4>
-      <img id="qrimg"  class="valign-wrapper responsive-img" src="">
+      <img id="qrimg"  class="" src="">
     </div>
     <div class="modal-footer">
       <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Done</a>

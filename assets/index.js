@@ -19,7 +19,11 @@ require('electron').ipcRenderer.on('copied', function(event, message) {
 let method = (() => {
   let delRow = (id) => {
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
-      doc.save(function(err) { /* saving the document */ });
+      doc.save(function(err) {
+        if (err) {
+          console.error("Delete error:" + err);
+        }
+      });
       console.log("This is the item's ID that will be deleted: " + id);
     });
   };
@@ -44,9 +48,9 @@ let method = (() => {
   };
 })();
 
-// Initial database loading + temp bugfix
+// Initial database loading
 function init() {
-  // Why am I doing this to myself... Oh well:
+  $("#searchbar").show();
   $('.brand-logo').text("Clipboard Manager");
   $('.button-collapse').sideNav('hide');
   $('#settings').hide();
@@ -55,13 +59,21 @@ function init() {
   $("#dasTable").addClass("centered striped");
   $("<thead></thead").appendTo("#dasTable");
    $("<tr></tr>").appendTo("thead");
-   $("<th id=\"contents\"></th>").appendTo("tr").text("Contents");
-   $("<th id=\"functions\"></th>").appendTo("tr").text("");
+   $("<th id=\"contentsth\"></th>").appendTo("tr").text("Contents");
+   $("<th id=\"functionsth\"></th>").appendTo("tr").text("");
    // Is there such a thing as too much jQuery?
-   $("<th></th>").appendTo("tr").text("Time");
+   $("<th id=\"timeth\"></th>").appendTo("tr").text("Time");
    $("<th hidden></th>").appendTo("tr").text("");
    $("<tbody></tbody>").appendTo("#dasTable");
    $("<tr></tr>").appendTo("tbody");
+  if ($("#search").val()) {
+    search($("#search").val());
+  } else {
+    populate();
+  }
+}
+
+function populate() {
   Doc.find({}).sort({time: 1})
   .filter(e => (e.text !== undefined))
   .map(res => {populateTable(res.text, moment.unix(res.time).format($("#time").val()), res._id);})
@@ -69,8 +81,18 @@ function init() {
   });
 }
 
+function search(str) {
+  let regex = new RegExp(str,"i");
+  $("#dasTable > tbody").empty();
+  Doc.find({}).sort({time: 1})
+  .filter(e => (e.text !== undefined && e.text.match(regex)))
+  .map(res => {populateTable(res.text, moment.unix(res.time).format($("#time").val()), res._id);})
+  .exec(function(err, res) {
+  });
+}
 
 function settings() {
+  $("#searchbar").hide("");
   $("#container").html("");
   $('.button-collapse').sideNav('hide');
   $('#settings').show();
@@ -129,10 +151,10 @@ function populateTable(text, time, id) {
    $("#modalContent").val(editText);
    $("#modalContent").trigger('autoresize');
    //Update database when done is clicked
-   $('#editDone').unbind().click(function() {
+   $('#editDone').unbind().click(() => {
      let newText = $("#modalContent").val();
      method.updateRow(id, newText);
-     $(self).closest('tr').find('td:nth-child(1)').text(newText);
+     $(this).closest('tr').find('td:nth-child(1)').text(newText);
      $('#editContent').closeModal();
      Materialize.toast('Done!', 2000);
    });
@@ -152,7 +174,7 @@ function populateTable(text, time, id) {
 }
 
 
-// to fix: some write text things eg. the clipboard writes only unformatted text
+// to fix: some write text things eg. the clipboard writes only unformatted text sometimes
 function copyText(text) {
   clipboard.writeText(text);
   Materialize.toast('Copied to clipboard!', 2000);
@@ -161,6 +183,7 @@ function copyText(text) {
 
 $(() => {
   init();
+  $("#clearform").hide();
   $(".hider").click(() => {
     $('.cardcontainer').hide();
   });
@@ -170,4 +193,24 @@ $(() => {
     $("#time").show();
     $("#advTime").hide(200);
   });
+  $("#search").focus(() => {
+    $("#clearform").show();
+  }).focusout(() => {
+    $("#clearform").hide(200);
+  });
+
+  $("#search").keyup(function() {
+    let timer;
+    clearTimeout(timer);
+    let ms = 150; // milliseconds
+    let val = this.value;
+    timer = setTimeout(function() {
+      search(val);
+    }, ms);
+  });
+  $("#clearform").click(() => {
+    $("#search").val('');
+    init();
+  });
+
 });

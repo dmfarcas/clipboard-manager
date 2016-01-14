@@ -1,3 +1,7 @@
+html {
+    overflow-y:scroll;
+}
+
 .controlIcons {
   font-size:20px !important;
   color: #D9D9D9;
@@ -8,17 +12,27 @@
   color:#808080;
 }
 
-#contents {
-  width: 100%;
+#contentsth {
+  width: 88%;
 }
 
-#qrimg {
-  width: 60%;
+#functionsth {
+  width:4%
 }
-/*tr {
-  height: 40px;
-}*/
 
+#timeth {
+  width: 8%;
+}
+
+
+  #qrimg {
+    width: 340px;
+  }
+
+#qrcode {
+  max-width:390px;
+  max-height:510px;
+}
 
 
 body {

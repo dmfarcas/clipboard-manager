@@ -76,8 +76,6 @@ app.on('ready', function() {
     console.log('registration failed');
   }
 
-  app.commandLine.appendSwitch('disable-cached-picture-raster');
-
 
 
   // Open the DevTools.
