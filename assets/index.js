@@ -183,23 +183,38 @@ function copyText(text) {
   Materialize.toast('Copied to clipboard!', 2000);
 }
 
-
+// this REALLY needs to be refactored
 $(() => {
   init();
+
+  // getting local storage stuff
   $("#time").val(localStorage.time);
   $("#clearform").hide();
+
+  // readme closer
   $(".hider").click(() => {
     $('.cardcontainer').hide();
   });
   $(".button-collapse").sideNav();
   $( "#time" ).hide();
-  $("#advTime").click(() => {
+
+  // moment js edit confirmation
+  if ($("#advTime").val() !== 'undefined') {
     $("#time").show();
-    $("#advTime").hide(200);
-  });
+    $("#advTime").hide();
+  } else {
+    $("#advTime").click(() => {
+      $("#time").show();
+      $("#advTime").hide(200);
+    });
+  }
+
+  // set time on keyup
   $("#time").keyup(function() {
     localStorage.time = $("#time").val();
   });
+
+  // Search function
   $("#search").focus(() => {
     $("#clearform").show();
   }).focusout(() => {
@@ -218,5 +233,4 @@ $(() => {
     $("#search").val('');
     init();
   });
-
 });

@@ -5,6 +5,8 @@
     "$": false,
     "jQuery": false,
     "moment": false,
-    "document": false
+    "document": false,
+    "Materialize": false,
+    "localStorage": false
   }
 }

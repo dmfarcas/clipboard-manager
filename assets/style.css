@@ -1,6 +1,6 @@
-/*html {
+html {
     overflow-y:scroll;
-}*/
+}
 
 .controlIcons {
   font-size:20px !important;
@@ -38,6 +38,9 @@ tr {
   max-height:510px;
 }
 
+#clearform {
+  margin-left: 20px;
+}
 
 body {
   cursor: default;
@@ -49,3 +52,7 @@ body {
 .hidden {
   visibility: hidden;
 }
+
+/*#dasTable {
+  margin: 2% 2% 2% 2%;
+}*/
