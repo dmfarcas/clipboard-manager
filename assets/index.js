@@ -7,6 +7,8 @@ LinvoDB.dbPath = process.cwd();
 var Doc = new LinvoDB("doc", { text: String, time: Date});
 var doc = new Doc();
 
+var htmlspecialchars = require('htmlspecialchars');
+
 const clipboard = require('electron').clipboard;
 const shell = require('electron').shell;
 
@@ -56,7 +58,7 @@ function init() {
   $('#settings').hide();
   $("#container").html("");
   $( "<table id=\"dasTable\"></table>" ).appendTo( "#container" );
-  $("#dasTable").addClass("centered striped");
+  $("#dasTable").addClass("striped");
   $("<thead></thead").appendTo("#dasTable");
    $("<tr></tr>").appendTo("thead");
    $("<th id=\"contentsth\"></th>").appendTo("tr").text("Contents");
@@ -114,7 +116,7 @@ function appendRow(text) {
 
 function populateTable(text, time, id) {
   // to do: populate table with \n as well
-  $('#dasTable').prepend('<tr><td>' + text +
+  $('#dasTable').prepend('<tr><td>' + htmlspecialchars(text) +
                                                     '</td><td>' +
                                                     '<i class="controlIcons fa fa-pencil"></i>' +
                                                     '<i class="controlIcons fa fa-qrcode"></i>' +
@@ -127,6 +129,7 @@ function populateTable(text, time, id) {
   $(".controlIcons").addClass("hidden");
   $("td").closest('tr').children('td:eq(0)').click(function() {
     let currText = $(this).text();
+    console.log($(this).html());
     copyText(currText);
   });
   $("tr").hover(function() {
@@ -183,22 +186,25 @@ function copyText(text) {
 
 $(() => {
   init();
+  $("#time").val(localStorage.time);
   $("#clearform").hide();
   $(".hider").click(() => {
     $('.cardcontainer').hide();
   });
   $(".button-collapse").sideNav();
-  $( "#time" ).val("HH:MM:ss").hide();
+  $( "#time" ).hide();
   $("#advTime").click(() => {
     $("#time").show();
     $("#advTime").hide(200);
+  });
+  $("#time").keyup(function() {
+    localStorage.time = $("#time").val();
   });
   $("#search").focus(() => {
     $("#clearform").show();
   }).focusout(() => {
     $("#clearform").hide(200);
   });
-
   $("#search").keyup(function() {
     let timer;
     clearTimeout(timer);

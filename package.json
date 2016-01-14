@@ -20,6 +20,7 @@
     "electron-prebuilt": "^0.36.1",
     "font-awesome": "^4.5.0",
     "handlebars": "^4.0.5",
+    "htmlspecialchars": "^1.0.5",
     "jquery": "^2.2.0",
     "linvodb3": "^3.13.0",
     "medeadown": "^1.1.8",
