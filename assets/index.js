@@ -11,6 +11,9 @@ var htmlspecialchars = require('htmlspecialchars');
 
 const clipboard = require('electron').clipboard;
 const shell = require('electron').shell;
+const nativeImage = require('electron').nativeImage;
+
+let fs = require('fs');
 
 // receiving events from main process
 require('electron').ipcRenderer.on('copied', function(event, message) {
@@ -20,6 +23,14 @@ require('electron').ipcRenderer.on('copied', function(event, message) {
 
 let method = (() => {
   let delRow = (id) => {
+    // got to query in case there is a png in the database, didn't find any better way with LinvoDB
+    Doc.findOne({ _id: id }, function (err, doc) {
+      if (doc.text.startsWith("doc.db/images/image")) {
+        fs.unlink(doc.text, function(res, error) {
+          console.log(error);
+        });
+      }
+    });
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
       doc.save(function(err) {
         if (err) {
@@ -36,7 +47,6 @@ let method = (() => {
     console.log("This is the update function." + id);
   };
   let qrcode = (text) => {
-    let fs = require('fs');
     let qr = require('qr-image');
     let qr_svg = qr.image(text, { type: 'svg' });
     qr_svg.pipe(fs.createWriteStream('assets/images/qr_code.svg'));
@@ -102,36 +112,123 @@ function settings() {
 }
 
 
+function checkFormat() {
+  let contentType =  clipboard.availableFormats();
+  if (jQuery.inArray( "image/png", contentType) !== -1) {
+    return "image/png";
+  }
+  if (jQuery.inArray( "text/plain", contentType) !== -1) {
+    return "text/plain";
+  }
+  if (jQuery.inArray( "text/html", contentType) !== -1) {
+    return "text/html";
+  }
+  if (contentType.length === 0) {
+    console.log("Clipboard is empty");
+    return "blank";
+  }
+}
+
 function appendRow(text) {
   var time = moment().unix();
-  Doc.save([ doc, { text: text, time: time } ], function(err, docs) {
-    populateTable(docs[1].text, moment.unix(time).format("HH:MM:ss"), docs[1]._id);
-    console.log("The id: " + docs[1]._id);
-    if(err) {
-      console.error("Something went wrong while saving data.");
-    }
-  });
+  if (checkFormat() === "image/png") {
+    // quick and dirty file name generator
+    let counterinit = 0;
+    let filenumber = parseInt(localStorage.pictureCounter) + counterinit;
+    localStorage.pictureCounter++;
+    let filename = 'doc.db/images/image' + localStorage.pictureCounter + '.png';
+    // write clipboard contents to file, saving it as PNG... while hanging a few seconds
+    // because the function seems to be synchronous...
+    fs.writeFile(filename, clipboard.readImage().toPng(), function (err) {
+            if (err)
+                throw err;
+            console.log('Save successful!');
+        });
+    Doc.save([ doc, { text: filename, time: time } ], function(err, docs) {
+      populateTable(docs[1].text, moment.unix(time).format("HH:MM:ss"), docs[1]._id);
+      if(err) {
+        console.error("Something went wrong while saving data.");
+      }
+    });
+   }
+
+ if (checkFormat() === "text/plain" || checkFormat() === "text/html") {
+   Doc.save([ doc, { text: text, time: time } ], function(err, docs) {
+     populateTable(docs[1].text, moment.unix(time).format("HH:MM:ss"), docs[1]._id);
+     if(err) {
+       console.error("Something went wrong while saving data.");
+     }
+   });
+
+  }
 }
 
 
 function populateTable(text, time, id) {
-  // to do: populate table with \n as well
-  $('#dasTable').prepend('<tr><td>' + htmlspecialchars(text) +
-                                                    '</td><td>' +
-                                                    '<i class="controlIcons fa fa-pencil"></i>' +
-                                                    '<i class="controlIcons fa fa-qrcode"></i>' +
-                                                    '<i class="controlIcons fa fa-trash-o"></i>' +
-                                                    '</td><td>' +
-                                                    time +
-                                                    '</td><td hidden>' +
-                                                    id +                                                                // a hidden ID is needed for update and delete functions
-                                                    '</td></tr>');
+  let item;
+  if(text.startsWith("doc.db/images/")) {
+    item = "<img id=\"picture\" src=\"" + text + "\">";
+    $('#dasTable')
+    .prepend('<tr><td>' + item +
+                        '</td><td>' +
+                        '<i class="controlIcons fa fa-trash-o"></i>' +
+                        '</td><td>' + time + '</td>' +
+                        '<td hidden>' + id + '</td></tr>');
+  }
+  else {
+    item = htmlspecialchars(text);
+    $('#dasTable')
+    .prepend('<tr><td>' + item +
+                        '</td><td>' +
+                        '<i class="controlIcons fa fa-pencil"></i>' +
+                        '<i class="controlIcons fa fa-qrcode"></i>' +
+                        '<i class="controlIcons fa fa-trash-o"></i>' +
+                        '</td><td>' + time + '</td>' +
+                        '<td hidden>' + id + '</td></tr>');
+  // Update function
+   $(".fa-pencil").unbind().click(function(e){
+     e.stopImmediatePropagation();
+     let id = $(this).closest('tr').find('td:nth-child(4)').text();
+     let editText = $(this).closest('tr').find('td:nth-child(1)').text();
+     let self = this;
+     $('#editContent').openModal();
+     $("#modalContent").val(editText);
+     $("#modalContent").trigger('autoresize');
+     //Update database when done is clicked
+     $('#editDone').unbind().click(() => {
+       let newText = $("#modalContent").val();
+       method.updateRow(id, newText);
+       $(this).closest('tr').find('td:nth-child(1)').text(newText);
+       $('#editContent').closeModal();
+       Materialize.toast('Done!', 2000);
+     });
+   });
+    // qr code function
+     $(".fa-qrcode").unbind().click(function() {
+       let text = $(this).closest('tr').find('td:nth-child(1)').text();
+       method.qrcode(text);
+       $("#qrimg").hide();
+       $('#qrcode').openModal();
+       // Poor man's promise
+       setTimeout(() => {
+         // update image name so it doesn't get one from cache
+         $("#qrimg").attr("src", "assets/images/qr_code.svg?"+ Math.random());
+         $("#qrimg").show();
+       }, 100);
+     });
+    }
+
   $(".controlIcons").addClass("hidden");
   $("td").closest('tr').children('td:eq(0)').click(function() {
-    let currText = $(this).text();
-    console.log($(this).html());
-    copyText(currText);
+    // assign the selection as plaintext or html, but if it's null(e.g an image) it'll get the image's source
+    let selection = $(this).text();
+    if ($(this).text() === '')
+      selection = $(this).children('img').attr('src');
+    copyText(selection);
+    console.log(selection);
   });
+
+  // Controls appear on hover, and disappear on hoverout
   $("tr").hover(function() {
       $(this).find(".controlIcons").removeClass("hidden");
   }, function() {
@@ -144,42 +241,18 @@ function populateTable(text, time, id) {
     method.delRow(id);
     Materialize.toast('Deleted!', 2000);
   });
-  // Update function
- $(".fa-pencil").unbind().click(function(e){
-   e.stopImmediatePropagation();
-   let id = $(this).closest('tr').find('td:nth-child(4)').text();
-   let editText = $(this).closest('tr').find('td:nth-child(1)').text();
-   let self = this;
-   $('#editContent').openModal();
-   $("#modalContent").val(editText);
-   $("#modalContent").trigger('autoresize');
-   //Update database when done is clicked
-   $('#editDone').unbind().click(() => {
-     let newText = $("#modalContent").val();
-     method.updateRow(id, newText);
-     $(this).closest('tr').find('td:nth-child(1)').text(newText);
-     $('#editContent').closeModal();
-     Materialize.toast('Done!', 2000);
-   });
- });
-
-   $(".fa-qrcode").unbind().click(function() {
-     let text = $(this).closest('tr').find('td:nth-child(1)').text();
-     method.qrcode(text);
-     $("#qrimg").hide();
-     $('#qrcode').openModal();
-     // Poor man's promise
-     setTimeout(() => {
-       $("#qrimg").attr("src", "assets/images/qr_code.svg?"+ Math.random());
-       $("#qrimg").show();
-     }, 100);
-   });
 }
 
 
 // to fix: some write text things eg. the clipboard writes only unformatted text sometimes
 function copyText(text) {
+  if (text.startsWith("doc.db/images")) {
+    // var stream = fs.createWriteStream(text);
+    clipboard.writeImage(text);
+  } else {
   clipboard.writeText(text);
+  }
+  console.log(clipboard.availableFormats(text));
   Materialize.toast('Copied to clipboard!', 2000);
 }
 
@@ -232,5 +305,11 @@ $(() => {
   $("#clearform").click(() => {
     $("#search").val('');
     init();
+  });
+
+  // Delete database
+  $("#deletedatabase").click(() => {
+    console.log("// to do");
+    $("#deleteconfirm").openModal();
   });
 });

@@ -53,6 +53,10 @@ body {
   visibility: hidden;
 }
 
+#picture {
+  width: 50%;
+}
+
 /*#dasTable {
   margin: 2% 2% 2% 2%;
 }*/

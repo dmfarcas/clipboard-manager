@@ -64,6 +64,7 @@ app.on('ready', function() {
   // Unfortunately, because of an Electron limitation, CTRL + C cannot be captured because it overwrites the system default copy shortcut.
   var retHtml = globalShortcut.register('CmdorCtrl+Shift+C', function() {
     mainWindow.webContents.send('copied', clipboard.readText());
+    console.log(clipboard.availableFormats());
   });
   if (!retHtml) {
     console.log('registration failed');

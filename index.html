@@ -88,11 +88,15 @@
                 "text" value="HH:MM:ss">
             </div>
         </div>
+        <br>
         <h4 class="header row">Change hotkeys</h4>
         <p>Any combination can be used, pretty much. Except the system wide
         copy shortcut. Electron's behavior is to make the shortcut exclusive
         for itself. If you choose CTRL - C, for example, your system's copy
         shortcut will not work.</p>
+        <br>
+        <h4 class="header row">Destroy database</h4>
+        <a class="waves-effect red waves-light btn col s2" id="deletedatabase">Destroy database</a>
     </div>
     <div class="modal bottom-sheet" id="editContent">
         <div class="modal-content">
@@ -117,5 +121,15 @@
             "#!">Done</a>
         </div>
     </div>
+    <div id="deleteconfirm" class="modal">
+  <div class="modal-content">
+    <h4>Destroy database</h4>
+    <p>This action is irreversible. All database data will be lost. Are you sure that you want to delete the database?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    <a href="#!" class="red white-text modal-action modal-close waves-effect waves-green btn-flat">I am sure</a>
+  </div>
+</div>
 </body>
 </html>
