@@ -4,6 +4,7 @@ A simple cross platform clipboard manager created in Electron
 ### Features
 * It saves images!
 * Can show the content as QR Codes
+* Works on OS X, Windows and Linux. Tested only on Arch Linux + KDE, though.
 
 ### Installation instructions
 ```
