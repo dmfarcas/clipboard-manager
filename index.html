@@ -97,32 +97,29 @@
         <p>Any combination can be used, pretty much. Except the system wide
         copy shortcut. Electron's behavior is to make the shortcut exclusive
         for itself. If you choose CTRL - C, for example, your system's copy
-        shortcut will not work.</p>
+        shortcut will not work. Be careful not to overwrite system/other applications' shortcuts. Trial and error...</p>
         <div class="row">
           <div class="input-field col s2">
-          <input disabled value="CMD or CTRL" id="disabled" type="text" class="validate">
+          <input disabled value="Cmd or Ctrl" id="disabled" type="text" class="validate">
           <label for="disabled">First key</label>
         </div>
         <div class="input-field col s3">
-  <select>
-    <option value="" disabled selected>Second key</option>
+  <select id="csecondkey" class="browser-default">
     <option value="1">DISABLED</option>
     <option value="2">SHIFT</option>
     <option value="3">ALT</option>
   </select>
-  <label>Second key</label>
 </div>
-<div class="input-field col s2">
-         <input placeholder="e.g. X" id="first_name" type="text" class="center-align validate">
-         <label for="disabled">One letter</label>
+<div class="input-field col s3">
+         <input id="cletter" placeholder="e.g. X" type="text" class="center-align validate" maxlength="1">
+         <label for="disable">One letter or symbol</label>
        </div>
 </div>
 <br>
 <p>Change show/hide app keyboard shortcut here.
 <div class="row">
   <div class="input-field col s2">
-    <select id="changehidehotkey">
-      <option value="" disabled selected>Second key</option>
+    <select class="browser-default" id="changehidehotkey">
       <option value="1">F1</option>
       <option value="2">F2</option>
       <option value="3">F3</option>
@@ -136,7 +133,6 @@
       <option value="11">F11</option>
       <option value="12">F12</option>
     </select>
-               <label for="disabled">Hide/show app</label>
          </div>
  </div>
         <br>
@@ -175,7 +171,7 @@
   </div>
   <div class="modal-footer">
     <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-    <a href="#!" class="red white-text modal-action modal-close waves-effect waves-green btn-flat">I am sure</a>
+    <a href="#!" class="red white-text modal-action modal-close waves-effect waves-green btn-flat" id="confirmdelete">I am sure</a>
   </div>
 </div>
 </body>

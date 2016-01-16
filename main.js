@@ -65,13 +65,17 @@ app.on('ready', function() {
   }
   });
 
+
+// Store old key values and unregister them when needed
 function unregisterkeys(arg) {
   oldhotkeys.push(arg);
   if(oldhotkeys[oldhotkeys.length-2])
     globalShortcut.unregister(oldhotkeys[oldhotkeys.length -2] );
 }
 
-ipcMain.on('change-copy-hotkey', function() {
+ipcMain.on('change-copy-hotkey', function(event, arg) {
+  unregisterkeys(arg);
+  copyPlain(arg);
   console.log("Changing copy hot key...");
 });
 
@@ -81,12 +85,12 @@ ipcMain.on('change-hide-hotkey', function(event, arg) {
 });
 
   // Unfortunately, because of an Electron limitation, CTRL + C cannot be captured because it overwrites the system default copy shortcut.
-var retHtml = (function(hotkey) {
+function copyPlain (hotkey) {
    globalShortcut.register(hotkey, function() {
     mainWindow.webContents.send('copied', clipboard.readText());
     console.log(clipboard.availableFormats());
   });
-})("CmdorCtrl+Shift+A");
+}
 
   // var retPlain = globalShortcut.register('CmdorCtrl+Alt+C', function() {
   //   mainWindow.webContents.send('copied', clipboard.readText());
@@ -114,6 +118,11 @@ function hideShow(hotkey) {
 ipcMain.on('ready', function(event, arg) {
   unregisterkeys(arg);
   hideShow(arg);
+});
+
+ipcMain.on('readycopy', function(event, arg) {
+  unregisterkeys(arg);
+  copyPlain(arg);
 });
 
 mainWindow.on('blur', () => {

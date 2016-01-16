@@ -2,13 +2,13 @@ html {
     overflow-y:scroll;
 }
 
-nav, .brand-logo  {
+/*nav, .brand-logo  {
   -webkit-app-region: drag;
 }
 
-#hamburger, a {
+#hamburger, a , label, select {
   -webkit-app-region: no-drag;
-}
+}*/
 
 .controlIcons {
   font-size:20px !important;

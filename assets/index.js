@@ -1,22 +1,33 @@
 'use strict';
 
 // Database
-var LinvoDB = require("linvodb3");
+let LinvoDB = require("linvodb3");
 LinvoDB.defaults.store = { db: require("medeadown") };
 LinvoDB.dbPath = process.cwd();
-var Doc = new LinvoDB("doc", { text: String, time: Date});
-var doc = new Doc();
+let Doc = new LinvoDB("doc", { text: String, time: Date});
+let doc = new Doc();
 
-var htmlspecialchars = require('htmlspecialchars');
+let htmlspecialchars = require('htmlspecialchars');
 
+// receiving events from main process
+const ipcRender = require('electron').ipcRenderer;
 const clipboard = require('electron').clipboard;
 const shell = require('electron').shell;
 const nativeImage = require('electron').nativeImage;
 
 let fs = require('fs');
+// creates the images folder, if it exists it'll just throw an error
 
-// receiving events from main process
-const ipcRender = require('electron').ipcRenderer;
+
+ fs.stat('doc.db/images', function(err, stat) {
+     if(err === null) {
+         console.log('File exists!');
+     } else if(err.code == 'ENOENT') {
+       fs.mkdirSync("doc.db/images");
+     } else {
+         console.log('Error: ', err.code);
+     }
+ });
 
 ipcRender.on('copied', function(event, message) {
   appendRow(message);
@@ -31,6 +42,9 @@ let method = (() => {
         fs.unlink(doc.text, function(res, error) {
           console.log(error);
         });
+      }
+      if (err) {
+        console.log(err);
       }
     });
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
@@ -142,7 +156,8 @@ function appendRow(text) {
     // write clipboard contents to file, saving it as PNG... while hanging a few seconds
     // because the function seems to be synchronous...
     // graphics magix or easy image?
-    fs.writeFile(filename, clipboard.readImage().toPng(), function (err) {
+    let picture = clipboard.readImage().toPng();
+    fs.writeFile(filename, picture, function (err) {
             if (err)
                 throw err;
             console.log('Save successful!');
@@ -265,24 +280,40 @@ function changeHotKeys(event, hotkey) {
   console.log("from funct: " + hotkey);
 }
 
+function copyShortcut(hotkey) {
+  console.log(hotkey);
+  localStorage.copyhotkey = hotkey;
+  changeHotKeys('change-copy-hotkey', hotkey);
+}
 
 function quitapp() {
   ipcRender.send('quit');
+  Doc.store.db.db.compact(function() { /* now you can exit*/ });
 }
-
 
 // this REALLY needs to be refactored
 $(() => {
   init();
-  ipcRender.send('ready', localStorage.hidehotkey);
+  let newcopyshortcut;
+  ipcRender.send('readyhide', localStorage.hidehotkey);
+  ipcRender.send('readycopy', localStorage.copyhotkey);
   $('select').material_select();
   // getting local storage stuff
   $("#time").val(localStorage.time);
   if (localStorage.hidehotkey === 'undefined') {
     localStorage.hidehotkey = "F10";
   }
-  $("#changehidehotkey").val(localStorage.hidehotkey);
+  // hacky but it works.. materialize select is weird
+  $("#changehidehotkey").val(localStorage.hidehotkey.slice(1));
+  // hacky select part 2...
+  if(localStorage.csecondkey === "DISABLED")
+  $("#csecondkey").val(1);
+  if(localStorage.csecondkey === "SHIFT")
+  $("#csecondkey").val(2);
+  if(localStorage.csecondkey === "ALT")
+  $("#csecondkey").val(3);
 
+  $("#cletter").val(localStorage.cletter);
   $("#clearform").hide();
 
   // readme closer
@@ -333,10 +364,52 @@ $(() => {
     localStorage.hidehotkey = newhotkey;
     changeHotKeys('change-hide-hotkey', newhotkey);
   });
+  $("#csecondkey").keyup(function() {
+    console.log($("#csecondkey option:selected").text());
+  });
+
+  // string logic. lots of it.
+  $("#cletter").keyup(function(event) {
+    if ($("#cletter").val() !== "" || (event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode >= 65 && event.keyCode <= 90)) {
+      if ($("#csecondkey option:selected").text() === "DISABLED"){
+      localStorage.csecondkey = "DISABLED";
+      newcopyshortcut = "CmdorCtrl" + "+" +
+        $("#cletter").val();
+        copyShortcut(newcopyshortcut);
+
+      } else {
+      localStorage.csecondkey = $("#csecondkey option:selected").text();
+      newcopyshortcut = "CmdorCtrl" + "+" +
+        $("#csecondkey option:selected").text() + "+" +
+        $("#cletter").val();
+        copyShortcut(newcopyshortcut);
+
+      }
+    }
+  });
+  // but wait, there's more!
+  $("#csecondkey").on('change', () => {
+    if ($("#cletter").val() !== "") {
+      if ($("#csecondkey option:selected").text() === "DISABLED"){
+      newcopyshortcut = "CmdorCtrl" + "+" +
+        $("#cletter").val();
+        copyShortcut(newcopyshortcut);
+
+      } else {
+      newcopyshortcut = "CmdorCtrl" + "+" +
+        $("#csecondkey option:selected").text() + "+" +
+        $("#cletter").val();
+        copyShortcut(newcopyshortcut);
+        localStorage.cletter = $("#cletter").val();
+      }
+    }
+  });
 
   // Delete database
   $("#deletedatabase").click(() => {
-    console.log("// to do");
     $("#deleteconfirm").openModal();
+  });
+  $("#confirmdelete").click(() => {
+    //todo
   });
 });
