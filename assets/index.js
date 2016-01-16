@@ -16,8 +16,8 @@ const shell = require('electron').shell;
 const nativeImage = require('electron').nativeImage;
 
 let fs = require('fs');
-// creates the images folder, if it exists it'll just throw an error
 
+let rmdir = require('rimraf');
 
  fs.stat('doc.db/images', function(err, stat) {
      if(err === null) {
@@ -283,6 +283,7 @@ function changeHotKeys(event, hotkey) {
 function copyShortcut(hotkey) {
   console.log(hotkey);
   localStorage.copyhotkey = hotkey;
+  $("#copycurrshortcut").text(localStorage.copyhotkey);
   changeHotKeys('change-copy-hotkey', hotkey);
 }
 
@@ -303,17 +304,8 @@ $(() => {
   if (localStorage.hidehotkey === 'undefined') {
     localStorage.hidehotkey = "F10";
   }
-  // hacky but it works.. materialize select is weird
-  $("#changehidehotkey").val(localStorage.hidehotkey.slice(1));
-  // hacky select part 2...
-  if(localStorage.csecondkey === "DISABLED")
-  $("#csecondkey").val(1);
-  if(localStorage.csecondkey === "SHIFT")
-  $("#csecondkey").val(2);
-  if(localStorage.csecondkey === "ALT")
-  $("#csecondkey").val(3);
-
-  $("#cletter").val(localStorage.cletter);
+  $("#copycurrshortcut").text(localStorage.copyshortcut);
+  $("#hidecurrshortcut").text(localStorage.hidehotkey);
   $("#clearform").hide();
 
   // readme closer
@@ -362,19 +354,19 @@ $(() => {
   $("#changehidehotkey").on('change', () => {
     let newhotkey = $("#changehidehotkey option:selected").text();
     localStorage.hidehotkey = newhotkey;
+    $("#hidecurrshortcut").text(localStorage.hidehotkey);
     changeHotKeys('change-hide-hotkey', newhotkey);
   });
   $("#csecondkey").keyup(function() {
-    console.log($("#csecondkey option:selected").text());
   });
 
   // string logic. lots of it.
   $("#cletter").keyup(function(event) {
     if ($("#cletter").val() !== "" || (event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode >= 65 && event.keyCode <= 90)) {
       if ($("#csecondkey option:selected").text() === "DISABLED"){
-      localStorage.csecondkey = "DISABLED";
       newcopyshortcut = "CmdorCtrl" + "+" +
         $("#cletter").val();
+        localStorage.copyshortcut = newcopyshortcut;
         copyShortcut(newcopyshortcut);
 
       } else {
@@ -382,6 +374,7 @@ $(() => {
       newcopyshortcut = "CmdorCtrl" + "+" +
         $("#csecondkey option:selected").text() + "+" +
         $("#cletter").val();
+        localStorage.copyshortcut = newcopyshortcut;
         copyShortcut(newcopyshortcut);
 
       }
@@ -393,6 +386,7 @@ $(() => {
       if ($("#csecondkey option:selected").text() === "DISABLED"){
       newcopyshortcut = "CmdorCtrl" + "+" +
         $("#cletter").val();
+        localStorage.copyshortcut = newcopyshortcut;
         copyShortcut(newcopyshortcut);
 
       } else {
@@ -400,7 +394,7 @@ $(() => {
         $("#csecondkey option:selected").text() + "+" +
         $("#cletter").val();
         copyShortcut(newcopyshortcut);
-        localStorage.cletter = $("#cletter").val();
+        localStorage.copyshortcut = newcopyshortcut;
       }
     }
   });
@@ -410,6 +404,11 @@ $(() => {
     $("#deleteconfirm").openModal();
   });
   $("#confirmdelete").click(() => {
-    //todo
+    Doc.remove({ }, { multi: true }, function (err, numRemoved) {
+      console.log("Remove: " + numRemoved);
+    });
+    rmdir("doc.db/images/*", function(error){
+      console.log("Deletion info: " + error);
+    });
   });
 });
