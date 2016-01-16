@@ -5,12 +5,16 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 const clipboard = require('electron').clipboard;
 const globalShortcut = electron.globalShortcut;
 const ipcMain = require('electron').ipcMain;
+const ipcRender = require('electron').ipcMain;
 const Tray = electron.Tray;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 var appIcon = null;
+
+  let oldhotkeys = [];
+
 
 // Seems to be needed to keep the application alive.
 app.on('window-all-closed', function() {
@@ -22,6 +26,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({width: 1003,
     height: 750,
     minWidth: 1000,
+    frame: false,
+    overlayScrollbar: true,
     icon: __dirname + '/assets/images/logo.png'
   });
   mainWindow.loadURL('file://' + __dirname + '/index.html');
@@ -45,8 +51,6 @@ app.on('ready', function() {
   appIcon.setToolTip('Clipboard Manager.');
 
 
-
-
   // Show and hide the application
   appIcon.on('click', function() {
 
@@ -61,14 +65,28 @@ app.on('ready', function() {
   }
   });
 
+function unregisterkeys(arg) {
+  oldhotkeys.push(arg);
+  if(oldhotkeys[oldhotkeys.length-2])
+    globalShortcut.unregister(oldhotkeys[oldhotkeys.length -2] );
+}
+
+ipcMain.on('change-copy-hotkey', function() {
+  console.log("Changing copy hot key...");
+});
+
+ipcMain.on('change-hide-hotkey', function(event, arg) {
+  unregisterkeys(arg);
+  hideShow(arg);
+});
+
   // Unfortunately, because of an Electron limitation, CTRL + C cannot be captured because it overwrites the system default copy shortcut.
-  var retHtml = globalShortcut.register('CmdorCtrl+Shift+C', function() {
+var retHtml = (function(hotkey) {
+   globalShortcut.register(hotkey, function() {
     mainWindow.webContents.send('copied', clipboard.readText());
     console.log(clipboard.availableFormats());
   });
-  if (!retHtml) {
-    console.log('registration failed');
-  }
+})("CmdorCtrl+Shift+A");
 
   // var retPlain = globalShortcut.register('CmdorCtrl+Alt+C', function() {
   //   mainWindow.webContents.send('copied', clipboard.readText());
@@ -77,7 +95,32 @@ app.on('ready', function() {
   //   console.log('registration failed');
   // }
 
+function hideShow(hotkey) {
+  globalShortcut.register(hotkey, function() {
+  console.log("The window is now: " + mainWindow.isVisible());
+  if (mainWindow.isVisible() === true) {
+    mainWindow.hide();
+  }
+  else {
+    mainWindow.show();
+  }
+ });
+}
 
+  ipcMain.on('quit', function() {
+    app.quit();
+  });
+
+ipcMain.on('ready', function(event, arg) {
+  unregisterkeys(arg);
+  hideShow(arg);
+});
+
+mainWindow.on('blur', () => {
+  if(mainWindow !== null && mainWindow.isVisible()) {
+    console.log("This is a weird case in which the window loses focus, and it's gone until it's focused manually. Huh.");
+  }
+});
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();

@@ -16,7 +16,9 @@ const nativeImage = require('electron').nativeImage;
 let fs = require('fs');
 
 // receiving events from main process
-require('electron').ipcRenderer.on('copied', function(event, message) {
+const ipcRender = require('electron').ipcRenderer;
+
+ipcRender.on('copied', function(event, message) {
   appendRow(message);
 });
 
@@ -139,6 +141,7 @@ function appendRow(text) {
     let filename = 'doc.db/images/image' + localStorage.pictureCounter + '.png';
     // write clipboard contents to file, saving it as PNG... while hanging a few seconds
     // because the function seems to be synchronous...
+    // graphics magix or easy image?
     fs.writeFile(filename, clipboard.readImage().toPng(), function (err) {
             if (err)
                 throw err;
@@ -256,12 +259,30 @@ function copyText(text) {
   Materialize.toast('Copied to clipboard!', 2000);
 }
 
+
+function changeHotKeys(event, hotkey) {
+  ipcRender.send(event, hotkey);
+  console.log("from funct: " + hotkey);
+}
+
+
+function quitapp() {
+  ipcRender.send('quit');
+}
+
+
 // this REALLY needs to be refactored
 $(() => {
   init();
-
+  ipcRender.send('ready', localStorage.hidehotkey);
+  $('select').material_select();
   // getting local storage stuff
   $("#time").val(localStorage.time);
+  if (localStorage.hidehotkey === 'undefined') {
+    localStorage.hidehotkey = "F10";
+  }
+  $("#changehidehotkey").val(localStorage.hidehotkey);
+
   $("#clearform").hide();
 
   // readme closer
@@ -305,6 +326,12 @@ $(() => {
   $("#clearform").click(() => {
     $("#search").val('');
     init();
+  });
+
+  $("#changehidehotkey").on('change', () => {
+    let newhotkey = $("#changehidehotkey option:selected").text();
+    localStorage.hidehotkey = newhotkey;
+    changeHotKeys('change-hide-hotkey', newhotkey);
   });
 
   // Delete database
