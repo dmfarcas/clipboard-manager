@@ -13,8 +13,8 @@ const Tray = electron.Tray;
 let mainWindow;
 var appIcon = null;
 
-  let oldhotkeys = [];
-
+let oldcopykeys = [];
+let oldhidekeys = [];
 
 // Seems to be needed to keep the application alive.
 app.on('window-all-closed', function() {
@@ -26,11 +26,12 @@ function createWindow() {
   mainWindow = new BrowserWindow({width: 1003,
     height: 750,
     minWidth: 1000,
-    frame: false,
+    frame: true,
     overlayScrollbar: true,
     icon: __dirname + '/assets/images/logo.png'
   });
   mainWindow.loadURL('file://' + __dirname + '/index.html');
+  mainWindow.setMenu(null);
   // mainWindow.setMenu(null);
   mainWindow.on('closed', function() {
 
@@ -67,20 +68,28 @@ app.on('ready', function() {
 
 
 // Store old key values and unregister them when needed
-function unregisterkeys(arg) {
-  oldhotkeys.push(arg);
-  if(oldhotkeys[oldhotkeys.length-2])
-    globalShortcut.unregister(oldhotkeys[oldhotkeys.length -2] );
+function unregisterhidekey(arg) {
+  oldhidekeys.push(arg);
+  if(oldhidekeys[oldhidekeys.length-2])
+    globalShortcut.unregister(oldhidekeys[oldhidekeys.length -2] );
 }
 
+
+function unregistercopykey(arg) {
+  oldcopykeys.push(arg);
+  if(oldcopykeys[oldcopykeys.length-2])
+    globalShortcut.unregister(oldcopykeys[oldcopykeys.length -2] );
+}
+
+
 ipcMain.on('change-copy-hotkey', function(event, arg) {
-  unregisterkeys(arg);
+  unregistercopykey(arg);
   copyPlain(arg);
   console.log("Changing copy hot key...");
 });
 
 ipcMain.on('change-hide-hotkey', function(event, arg) {
-  unregisterkeys(arg);
+  unregisterhidekey(arg);
   hideShow(arg);
 });
 
@@ -115,13 +124,13 @@ function hideShow(hotkey) {
     app.quit();
   });
 
-ipcMain.on('ready', function(event, arg) {
-  unregisterkeys(arg);
+ipcMain.on('readyhide', function(event, arg) {
+  unregisterhidekey(arg);
   hideShow(arg);
 });
 
 ipcMain.on('readycopy', function(event, arg) {
-  unregisterkeys(arg);
+  unregistercopykey(arg);
   copyPlain(arg);
 });
 

@@ -1,14 +1,17 @@
 html {
     overflow-y:scroll;
+    cursor: default;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
 }
 
 nav, .brand-logo  {
   -webkit-app-region: drag;
 }
 
-#hamburger, a {
-  -webkit-app-region: no-drag;
-}
+  #hamburger, a {
+    -webkit-app-region: no-drag;
+  }
 
 .controlIcons {
   font-size:20px !important;
@@ -53,10 +56,8 @@ th, td {
   margin-left: 20px;
 }
 
-body {
-  cursor: default;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
+html {
+
 }
 
 
