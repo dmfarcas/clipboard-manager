@@ -105,14 +105,14 @@ ipcMain.on('change-hide-hotkey', function(event, arg) {
 function copyPlain (hotkey) {
    globalShortcut.register(hotkey, function() {
     mainWindow.webContents.send('copied', clipboard.readText());
-    notification(content);
+    notification(hotkey);
   });
 }
 
 
 // notifications
 function notification(content) {
-  if (notiftoggle) {
+  if (notiftoggle == 'true') {
     notifier.notify({
       title: 'Content copied!',
       message: clipboard.readText(),

@@ -301,15 +301,26 @@ $(() => {
   if (!localStorage.notif) {
     localStorage.notif = "true";
   }
+
+  // send local storage stuff to main process
   ipcRender.send('readyhide', localStorage.hidehotkey);
   ipcRender.send('readycopy', localStorage.copyshortcut);
-  ipcRender.send('shownotif', localStorage.shownotif);
+  ipcRender.send('shownotif', localStorage.notif);
+
   $('select').material_select();
+
   // getting local storage stuff
   $("#time").val(localStorage.time);
   $(".copycurrshortcut").text(localStorage.copyshortcut);
   $(".hidecurrshortcut").text(localStorage.hidehotkey);
-  $("#notiftoggle").prop('checked', localStorage.notif);
+  $("#notiftoggle").prop('checked', JSON.parse(localStorage.notif));
+
+  // // no need to stringify here
+  // if (localStorage.notif === "true")
+  //   $("#notiftoggle").prop('checked', JSON.parse(localStorage.notif));
+  // if (localStorage.notif === "false")
+  //   $("#notiftoggle").prop('checked', false);
+
   $("#clearform").hide();
 
   // readme closer
@@ -362,6 +373,7 @@ $(() => {
 
   $("#notiftoggle").on('change', function() {
     localStorage.notif = $(this).prop('checked');
+    ipcRender.send('shownotif', localStorage.notif);
   });
 
   $("#changehidehotkey").on('change', () => {
