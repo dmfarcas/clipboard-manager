@@ -60,13 +60,11 @@ let method = (() => {
     Doc.update({ _id: id }, { $set: { text: text } }, function (err, numReplaced) {
       doc.save(function(err) { /* saving the document */ });
 });
-    console.log("This is the update function." + id);
   };
   let qrcode = (text) => {
     let qr = require('qr-image');
     let qr_svg = qr.image(text, { type: 'svg' });
     qr_svg.pipe(fs.createWriteStream('assets/images/qr_code.svg'));
-    console.log("This is the qrcode function." + text);
   };
 
   return {
@@ -140,7 +138,6 @@ function checkFormat() {
     return "text/html";
   }
   if (contentType.length === 0) {
-    console.log("Clipboard is empty");
     return "blank";
   }
 }
@@ -243,7 +240,6 @@ function populateTable(text, time, id) {
     if ($(this).text() === '')
       selection = $(this).children('img').attr('src');
     copyText(selection);
-    console.log(selection);
   });
 
   // Controls appear on hover, and disappear on hoverout
@@ -270,20 +266,17 @@ function copyText(text) {
   } else {
   clipboard.writeText(text);
   }
-  console.log(clipboard.availableFormats(text));
   Materialize.toast('Copied to clipboard!', 2000);
 }
 
 
 function changeHotKeys(event, hotkey) {
   ipcRender.send(event, hotkey);
-  console.log("from funct: " + hotkey);
 }
 
 function copyShortcut(hotkey) {
-  console.log(hotkey);
-  localStorage.copyhotkey = hotkey;
-  $("#copycurrshortcut").text(localStorage.copyhotkey);
+  localStorage.copyshortcut = hotkey;
+  $("#copycurrshortcut").text(localStorage.copyshortcut);
   changeHotKeys('change-copy-hotkey', hotkey);
 }
 
@@ -296,22 +289,38 @@ function quitapp() {
 $(() => {
   init();
   let newcopyshortcut;
+  if (!localStorage.hidehotkey) {
+    localStorage.hidehotkey = "F10";
+  }
+  if (!localStorage.copyshortcut) {
+    localStorage.copyshortcut = "CmdorCtrl+Shift+C";
+  }
+  if (!localStorage.time) {
+    localStorage.time = "HH:MM:ss";
+  }
+  if (!localStorage.notif) {
+    localStorage.notif = "true";
+  }
   ipcRender.send('readyhide', localStorage.hidehotkey);
-  ipcRender.send('readycopy', localStorage.copyhotkey);
+  ipcRender.send('readycopy', localStorage.copyshortcut);
+  ipcRender.send('shownotif', localStorage.shownotif);
   $('select').material_select();
   // getting local storage stuff
   $("#time").val(localStorage.time);
-  if (localStorage.hidehotkey === 'undefined') {
-    localStorage.hidehotkey = "F10";
-  }
-  $("#copycurrshortcut").text(localStorage.copyshortcut);
-  $("#hidecurrshortcut").text(localStorage.hidehotkey);
+  $(".copycurrshortcut").text(localStorage.copyshortcut);
+  $(".hidecurrshortcut").text(localStorage.hidehotkey);
+  $("#notiftoggle").prop('checked', localStorage.notif);
   $("#clearform").hide();
 
   // readme closer
   $(".hider").click(() => {
+    localStorage.hidetips = 1;
     $('.cardcontainer').hide();
   });
+  if (localStorage.hidetips)
+    $('.cardcontainer').hide();
+
+
   $(".button-collapse").sideNav();
   $( "#time" ).hide();
 
@@ -349,6 +358,10 @@ $(() => {
   $("#clearform").click(() => {
     $("#search").val('');
     init();
+  });
+
+  $("#notiftoggle").on('change', function() {
+    localStorage.notif = $(this).prop('checked');
   });
 
   $("#changehidehotkey").on('change', () => {
@@ -405,7 +418,7 @@ $(() => {
   });
   $("#confirmdelete").click(() => {
     Doc.remove({ }, { multi: true }, function (err, numRemoved) {
-      console.log("Remove: " + numRemoved);
+      console.log("Removed: " + numRemoved);
     });
     rmdir("doc.db/images/*", function(error){
       console.log("Deletion info: " + error);

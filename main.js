@@ -8,15 +8,23 @@ const ipcMain = require('electron').ipcMain;
 const ipcRender = require('electron').ipcMain;
 const Tray = electron.Tray;
 
+
+// Notifications
+var notifier = require('node-notifier');
+var path = require('path');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 var appIcon = null;
 
+// shortcut memory
 let oldcopykeys = [];
 let oldhidekeys = [];
+let notiftoggle;
 
-// Seems to be needed to keep the application alive.
+
+// Seems to be needed to keep the application alive when closed.
 app.on('window-all-closed', function() {
   // woopwoopwoop
 });
@@ -58,7 +66,7 @@ app.on('ready', function() {
     if (mainWindow !== null && mainWindow.isVisible()) {
       mainWindow.hide();
     }
-    else if(mainWindow !== null && mainWindow.isVisible() === 0) {
+    else if(!mainWindow.isVisible()) {
       mainWindow.show();
     }
    if(mainWindow === null) {
@@ -85,7 +93,6 @@ function unregistercopykey(arg) {
 ipcMain.on('change-copy-hotkey', function(event, arg) {
   unregistercopykey(arg);
   copyPlain(arg);
-  console.log("Changing copy hot key...");
 });
 
 ipcMain.on('change-hide-hotkey', function(event, arg) {
@@ -93,12 +100,31 @@ ipcMain.on('change-hide-hotkey', function(event, arg) {
   hideShow(arg);
 });
 
-  // Unfortunately, because of an Electron limitation, CTRL + C cannot be captured because it overwrites the system default copy shortcut.
+
+  // Unfortunately, because of a limitation, CTRL + C cannot be captured because it overwrites the system default copy shortcut.
 function copyPlain (hotkey) {
    globalShortcut.register(hotkey, function() {
     mainWindow.webContents.send('copied', clipboard.readText());
-    console.log(clipboard.availableFormats());
+    notification(content);
   });
+}
+
+
+// notifications
+function notification(content) {
+  if (notiftoggle) {
+    notifier.notify({
+      title: 'Content copied!',
+      message: clipboard.readText(),
+      icon: path.join(__dirname, '/assets/images/logo.png'),
+      sound: false,
+      wait: false
+    }, function (err, response) {
+      if (err) {
+        console.log("Cannot send notification: " + err);
+      }
+    });
+  }
 }
 
   // var retPlain = globalShortcut.register('CmdorCtrl+Alt+C', function() {
@@ -110,7 +136,6 @@ function copyPlain (hotkey) {
 
 function hideShow(hotkey) {
   globalShortcut.register(hotkey, function() {
-  console.log("The window is now: " + mainWindow.isVisible());
   if (mainWindow.isVisible() === true) {
     mainWindow.hide();
   }
@@ -134,14 +159,13 @@ ipcMain.on('readycopy', function(event, arg) {
   copyPlain(arg);
 });
 
-mainWindow.on('blur', () => {
-  if(mainWindow !== null && mainWindow.isVisible()) {
-    console.log("This is a weird case in which the window loses focus, and it's gone until it's focused manually. Huh.");
-  }
+ipcMain.on('shownotif', function(event, arg) {
+  notiftoggle = arg;
 });
 
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
