@@ -18,6 +18,7 @@ npm start
 * Change database to mongo, load the database into an array or whatever.
 * Notifications
 * Modal to show image larger?
+* More image formats. Image Magick would be required tho
  
 ### Known bugs
 * Image saving is not async - it freezes the app for a second or two.
