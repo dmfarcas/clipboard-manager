@@ -2,7 +2,7 @@
 
 // Database
 let LinvoDB = require("linvodb3");
-LinvoDB.defaults.store = { db: require("medeadown") };
+LinvoDB.defaults.store = { db: require("level-js") };
 LinvoDB.dbPath = process.cwd();
 let Doc = new LinvoDB("doc", { text: String, time: Date});
 let doc = new Doc();
@@ -101,7 +101,7 @@ function init() {
 
 function populate() {
   Doc.find({}).sort({time: 1})
-  .filter(e => (e.text !== undefined))
+  .filter(e => (e.text))
   .map(res => {populateTable(res.text, moment.unix(res.time).format($("#time").val()), res._id);})
   .exec(function(err, res) {
   });
@@ -111,7 +111,7 @@ function search(str) {
   let regex = new RegExp(str,"i");
   $("#dasTable > tbody").empty();
   Doc.find({}).sort({time: 1})
-  .filter(e => (e.text !== undefined && e.text.match(regex)))
+  .filter(e => (e.text && e.text.match(regex)))
   .map(res => {populateTable(res.text, moment.unix(res.time).format($("#time").val()), res._id);})
   .exec(function(err, res) {
   });
