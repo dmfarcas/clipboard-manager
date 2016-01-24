@@ -9,9 +9,9 @@ nav, .brand-logo  {
   -webkit-app-region: drag;
 }
 
-  #hamburger, a {
-    -webkit-app-region: no-drag;
-  }
+#hamburger, a {
+  -webkit-app-region: no-drag;
+}
 
 .controlIcons {
   font-size:20px !important;
@@ -46,9 +46,9 @@ th, td {
   width: 8%;
 }
 
-  #qrimg {
-    width: 340px;
-  }
+#qrimg {
+  width: 340px;
+}
 
 #qrcode {
   max-width:390px;
@@ -59,11 +59,6 @@ th, td {
   margin-left: 20px;
 }
 
-html {
-
-}
-
-
 .hidden {
   visibility: hidden;
 }
@@ -71,7 +66,3 @@ html {
 #picture {
   width: 50%;
 }
-
-/*#dasTable {
-  margin: 2% 2% 2% 2%;
-}*/
