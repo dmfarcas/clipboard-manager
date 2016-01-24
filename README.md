@@ -1,17 +1,38 @@
 # clipboard-manager
 A simple cross platform clipboard manager created in Electron
 
-### Features
-* It saves images!
-* Can show the content as QR Codes
-* Works on OS X, Windows and Linux. Tested only on Arch Linux + KDE, though.
-
 ### Installation instructions
 ```
 git clone https://github.com/dmfarcas/clipboard-manager.git 
 npm install
 npm start
 ```
+
+### Features
+You can copy text
+
+ 
+![Copy](https://media.giphy.com/media/Je0VtvAOii8JG/giphy.gif "Copy")
+
+...and images!
+
+![image](https://media.giphy.com/media/cfFkywZVc8sRq/giphy.gif "Image")
+
+
+Edit clipboard
+
+
+![image](https://media.giphy.com/media/142v5imr1LgVoY/giphy.gif "Image")
+
+
+QR Codes!
+
+![image](https://media.giphy.com/media/dS24CPNRrJE88/giphy.gif "Image")
+
+ 
+ 
+Works on OS X, Windows and Linux. Tested only on Arch Linux + KDE, though.
+
 ### To do
 * Paste formatted text. Without executing the javascript that's contained, that is.
 * Pagination
