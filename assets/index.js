@@ -19,11 +19,11 @@ let fs = require('fs');
 
 let rmdir = require('rimraf');
 
- fs.stat('doc.db/images', function(err, stat) {
+ fs.stat('images', function(err, stat) {
      if(err === null) {
          console.log('File exists!');
      } else if(err.code == 'ENOENT') {
-       fs.mkdirSync("doc.db/images");
+       fs.mkdirSync("images");
      } else {
          console.log('Error: ', err.code);
      }
@@ -38,7 +38,7 @@ let method = (() => {
   let delRow = (id) => {
     // got to query in case there is a png in the database, didn't find any better way with LinvoDB
     Doc.findOne({ _id: id }, function (err, doc) {
-      if (doc.text.startsWith("doc.db/images/image")) {
+      if (doc.text.startsWith("images/image")) {
         fs.unlink(doc.text, function(res, error) {
           console.log(error);
         });
@@ -146,10 +146,9 @@ function appendRow(text) {
   var time = moment().unix();
   if (checkFormat() === "image/png") {
     // quick and dirty file name generator
-    let counterinit = 0;
-    let filenumber = parseInt(localStorage.pictureCounter) + counterinit;
+    let filenumber = parseInt(localStorage.pictureCounter);
     localStorage.pictureCounter++;
-    let filename = 'doc.db/images/image' + localStorage.pictureCounter + '.png';
+    let filename = 'images/image' + localStorage.pictureCounter + '.png';
     // write clipboard contents to file, saving it as PNG... while hanging a few seconds
     // because the function seems to be synchronous...
     // graphics magix or easy image?
@@ -181,7 +180,7 @@ function appendRow(text) {
 
 function populateTable(text, time, id) {
   let item;
-  if(text.startsWith("doc.db/images/")) {
+  if(text.startsWith("images/")) {
     item = "<img id=\"picture\" src=\"" + text + "\">";
     $('#dasTable')
     .prepend('<tr><td>' + item +
@@ -260,7 +259,7 @@ function populateTable(text, time, id) {
 
 // to fix: some write text things eg. the clipboard writes only unformatted text sometimes
 function copyText(text) {
-  if (text.startsWith("doc.db/images")) {
+  if (text.startsWith("images")) {
     // var stream = fs.createWriteStream(text);
     clipboard.writeImage(text);
   } else {
@@ -300,6 +299,9 @@ $(() => {
   }
   if (!localStorage.notif) {
     localStorage.notif = "true";
+  }
+  if (!localStorage.pictureCounter) {
+    localStorage.pictureCounter = 0;
   }
 
   // send local storage stuff to main process
@@ -432,7 +434,7 @@ $(() => {
     Doc.remove({ }, { multi: true }, function (err, numRemoved) {
       console.log("Removed: " + numRemoved);
     });
-    rmdir("doc.db/images/*", function(error){
+    rmdir("images/*", function(error){
       console.log("Deletion info: " + error);
     });
   });
