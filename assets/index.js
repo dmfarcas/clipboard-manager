@@ -7,6 +7,9 @@ LinvoDB.dbPath = process.cwd();
 let Doc = new LinvoDB("doc", { text: String, time: Date});
 let doc = new Doc();
 
+let fs = require('fs');
+let rmdir = require('rimraf');
+
 let htmlspecialchars = require('htmlspecialchars');
 
 // receiving events from main process
@@ -15,20 +18,20 @@ const clipboard = require('electron').clipboard;
 const shell = require('electron').shell;
 const nativeImage = require('electron').nativeImage;
 
-let fs = require('fs');
 
-let rmdir = require('rimraf');
-
+// check if images file exists on startup
  fs.stat('images', function(err, stat) {
      if(err === null) {
          console.log('File exists!');
      } else if(err.code == 'ENOENT') {
        fs.mkdirSync("images");
      } else {
-         console.log('Error: ', err.code);
+         console.log(`Error: ${err.code}`);
      }
  });
 
+
+// receiving copy event from main process
 ipcRender.on('copied', function(event, message) {
   appendRow(message);
 });
@@ -50,10 +53,10 @@ let method = (() => {
     Doc.remove({ _id: id }, {}, function (err, numRemoved) {
       doc.save(function(err) {
         if (err) {
-          console.error("Delete error:" + err);
+          console.error(`Delete error: ${err}`);
         }
       });
-      console.log("This is the item's ID that will be deleted: " + id);
+      console.log(`This is the item's ID that will be deleted: ${id}`);
     });
   };
   let updateRow = (id, text) => {
@@ -74,6 +77,7 @@ let method = (() => {
   };
 })();
 
+
 // Initial database loading
 function init() {
   $("#searchbar").show();
@@ -85,10 +89,16 @@ function init() {
   $("#dasTable").addClass("striped");
   $("<thead></thead").appendTo("#dasTable");
    $("<tr></tr>").appendTo("thead");
-   $("<th id=\"contentsth\"></th>").appendTo("tr").text("Contents");
-   $("<th id=\"functionsth\"></th>").appendTo("tr").text("");
+   $("<th id=\"contentsth\"></th>").
+    appendTo("tr").
+    text("Contents");
+   $("<th id=\"functionsth\"></th>").
+    appendTo("tr").
+    text("");
    // Is there such a thing as too much jQuery?
-   $("<th id=\"timeth\"></th>").appendTo("tr").text("Time");
+   $("<th id=\"timeth\"></th>").
+    appendTo("tr").
+    text("Time");
    $("<th hidden></th>").appendTo("tr").text("");
    $("<tbody></tbody>").appendTo("#dasTable");
    $("<tr></tr>").appendTo("tbody");
@@ -117,6 +127,8 @@ function search(str) {
   });
 }
 
+
+// show settings, hide container
 function settings() {
   $("#searchbar").hide("");
   $("#container").html("");
@@ -142,6 +154,7 @@ function checkFormat() {
   }
 }
 
+
 function appendRow(text) {
   var time = moment().unix();
   if (checkFormat() === "image/png") {
@@ -149,6 +162,7 @@ function appendRow(text) {
     let filenumber = parseInt(localStorage.pictureCounter);
     localStorage.pictureCounter++;
     let filename = 'images/image' + localStorage.pictureCounter + '.png';
+
     // write clipboard contents to file, saving it as PNG... while hanging a few seconds
     // because the function seems to be synchronous...
     // graphics magix or easy image?
@@ -182,34 +196,39 @@ function populateTable(text, time, id) {
   let item;
   if(text.startsWith("images/")) {
     item = "<img id=\"picture\" src=\"" + text + "\">";
+
     $('#dasTable')
     .prepend('<tr><td>' + item +
-                        '</td><td>' +
-                        '<i class="controlIcons fa fa-trash-o"></i>' +
-                        '</td><td>' + time + '</td>' +
-                        '<td hidden>' + id + '</td></tr>');
-  }
-  else {
+        '</td><td>' +
+        '<i class="controlIcons fa fa-trash-o"></i>' +
+        '</td><td>' + time + '</td>' +
+        '<td hidden>' + id + '</td></tr>');
+  } else {
     item = htmlspecialchars(text);
     $('#dasTable')
     .prepend('<tr><td>' + item +
-                        '</td><td>' +
-                        '<i class="controlIcons fa fa-pencil"></i>' +
-                        '<i class="controlIcons fa fa-qrcode"></i>' +
-                        '<i class="controlIcons fa fa-trash-o"></i>' +
-                        '</td><td>' + time + '</td>' +
-                        '<td hidden>' + id + '</td></tr>');
-  // Update function
+      '</td><td>' +
+      '<i class="controlIcons fa fa-pencil"></i>' +
+      '<i class="controlIcons fa fa-qrcode"></i>' +
+      '<i class="controlIcons fa fa-trash-o"></i>' +
+      '</td><td>' + time + '</td>' +
+      '<td hidden>' + id + '</td></tr>');
+
+   // Update function
    $(".fa-pencil").unbind().click(function(e){
      e.stopImmediatePropagation();
-     let id = $(this).closest('tr').find('td:nth-child(4)').text();
-     let editText = $(this).closest('tr').find('td:nth-child(1)').text();
+     let id = $(this).closest('tr').find('td:nth-child(4)').
+      text();
+     let editText = $(this).closest('tr').find('td:nth-child(1)').
+      text();
      let self = this;
      $('#editContent').openModal();
      $("#modalContent").val(editText);
      $("#modalContent").trigger('autoresize');
      //Update database when done is clicked
-     $('#editDone').unbind().click(() => {
+     $('#editDone').
+      unbind().
+      click(() => {
        let newText = $("#modalContent").val();
        method.updateRow(id, newText);
        $(this).closest('tr').find('td:nth-child(1)').text(newText);
@@ -217,12 +236,16 @@ function populateTable(text, time, id) {
        Materialize.toast('Done!', 2000);
      });
    });
+
     // qr code function
-     $(".fa-qrcode").unbind().click(function() {
-       let text = $(this).closest('tr').find('td:nth-child(1)').text();
+     $(".fa-qrcode").unbind().
+      click(function() {
+       let text = $(this).closest('tr').find('td:nth-child(1)').
+        text();
        method.qrcode(text);
        $("#qrimg").hide();
        $('#qrcode').openModal();
+
        // Poor man's promise
        setTimeout(() => {
          // update image name so it doesn't get one from cache
@@ -233,24 +256,35 @@ function populateTable(text, time, id) {
     }
 
   $(".controlIcons").addClass("hidden");
-  $("td").closest('tr').children('td:eq(0)').click(function() {
+  $("td").closest('tr').
+    children('td:eq(0)').
+    click(function() {
     // assign the selection as plaintext or html, but if it's null(e.g an image) it'll get the image's source
     let selection = $(this).text();
     if ($(this).text() === '')
-      selection = $(this).children('img').attr('src');
+      selection = $(this).
+        children('img').
+        attr('src');
     copyText(selection);
   });
 
   // Controls appear on hover, and disappear on hoverout
   $("tr").hover(function() {
-      $(this).find(".controlIcons").removeClass("hidden");
+      $(this).find(".controlIcons").
+        removeClass("hidden");
   }, function() {
-    $(this).find(".controlIcons").addClass("hidden");
+    $(this).find(".controlIcons").
+      addClass("hidden");
   });
+
   // Remove row function
-  $(".fa-trash-o").unbind().click(function() {
-    let id = $(this).closest('tr').find('td:nth-child(4)').text();
-    $(this).closest('tr').remove();
+  $(".fa-trash-o").unbind().
+    click(function() {
+    let id = $(this).closest('tr').
+      find('td:nth-child(4)').
+      text();
+    $(this).closest('tr').
+      remove();
     method.delRow(id);
     Materialize.toast('Deleted!', 2000);
   });
@@ -273,18 +307,20 @@ function changeHotKeys(event, hotkey) {
   ipcRender.send(event, hotkey);
 }
 
+
 function copyShortcut(hotkey) {
   localStorage.copyshortcut = hotkey;
   $("#copycurrshortcut").text(localStorage.copyshortcut);
   changeHotKeys('change-copy-hotkey', hotkey);
 }
 
+
 function quitapp() {
   ipcRender.send('quit');
   Doc.store.db.db.compact(function() { /* now you can exit*/ });
 }
 
-// this REALLY needs to be refactored
+
 $(() => {
   init();
   let newcopyshortcut;
@@ -316,13 +352,6 @@ $(() => {
   $(".copycurrshortcut").text(localStorage.copyshortcut);
   $(".hidecurrshortcut").text(localStorage.hidehotkey);
   $("#notiftoggle").prop('checked', JSON.parse(localStorage.notif));
-
-  // // no need to stringify here
-  // if (localStorage.notif === "true")
-  //   $("#notiftoggle").prop('checked', JSON.parse(localStorage.notif));
-  // if (localStorage.notif === "false")
-  //   $("#notiftoggle").prop('checked', false);
-
   $("#clearform").hide();
 
   // readme closer
@@ -389,13 +418,14 @@ $(() => {
 
   // string logic. lots of it.
   $("#cletter").keyup(function(event) {
-    if ($("#cletter").val() !== "" || (event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode >= 65 && event.keyCode <= 90)) {
+    if ($("#cletter").val() !== "" ||
+      (event.keyCode >= 48 && event.keyCode <= 57 ||
+      event.keyCode >= 65 && event.keyCode <= 90)) {
       if ($("#csecondkey option:selected").text() === "DISABLED"){
       newcopyshortcut = "CmdorCtrl" + "+" +
         $("#cletter").val();
         localStorage.copyshortcut = newcopyshortcut;
         copyShortcut(newcopyshortcut);
-
       } else {
       localStorage.csecondkey = $("#csecondkey option:selected").text();
       newcopyshortcut = "CmdorCtrl" + "+" +
@@ -403,7 +433,6 @@ $(() => {
         $("#cletter").val();
         localStorage.copyshortcut = newcopyshortcut;
         copyShortcut(newcopyshortcut);
-
       }
     }
   });
@@ -415,7 +444,6 @@ $(() => {
         $("#cletter").val();
         localStorage.copyshortcut = newcopyshortcut;
         copyShortcut(newcopyshortcut);
-
       } else {
       newcopyshortcut = "CmdorCtrl" + "+" +
         $("#csecondkey option:selected").text() + "+" +
@@ -432,10 +460,11 @@ $(() => {
   });
   $("#confirmdelete").click(() => {
     Doc.remove({ }, { multi: true }, function (err, numRemoved) {
-      console.log("Removed: " + numRemoved);
+      console.log(`Removed: ${numRemoved}`);
     });
     rmdir("images/*", function(error){
-      console.log("Deletion info: " + error);
+      console.log(`Deletion info: ${error}`);
+
     });
   });
 });
