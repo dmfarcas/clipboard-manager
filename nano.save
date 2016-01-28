@@ -1,5 +1,0 @@
-#!/bin/bash
-figlet "Dan Farcas" > newindex.html
-
-cowsay | fortune > newindex.html
-
