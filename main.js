@@ -7,6 +7,7 @@ const globalShortcut = electron.globalShortcut;
 const ipcMain = require('electron').ipcMain;
 const ipcRender = require('electron').ipcMain;
 const Tray = electron.Tray;
+const Menu = electron.Menu;
 
 
 // Notifications
@@ -41,7 +42,6 @@ function createWindow() {
   });
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow.setMenu(null);
-  // mainWindow.setMenu(null);
   mainWindow.on('closed', function() {
 
     mainWindow = null;
@@ -59,6 +59,11 @@ app.on('ready', function() {
   // Create a tray icon
   appIcon = new Tray('assets/images/logo.png');
   appIcon.setToolTip('Clipboard Manager.');
+  const contextMenu = Menu.buildFromTemplate([
+      { label: 'Quit', click: function() { app.quit(); } }
+    ]);
+
+    appIcon.setContextMenu(contextMenu);
 
 
   // Show and hide the application
@@ -171,7 +176,7 @@ app.on('ready', function() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-
+    app.quit();
   });
 
 });
