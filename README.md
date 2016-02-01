@@ -31,17 +31,16 @@ QR Codes!
 
  
  
-Works on OS X, Windows and Linux. Tested only on Arch Linux + KDE, though.
+Works on OS X, Windows and Linux. Tested only on Arch Linux + KDE and OSX, though.
 
 ### To do
 * Paste formatted text. Without executing the javascript that's contained, that is.
 * Pagination
-* Change database to mongo, load the database into an array or whatever.
 * Notifications
-* Modal to show image larger?
 * More image formats. Image Magick would be required tho
- 
+* Image tagging
+* Macro shortcuts
+
 ### Known bugs
 * Image saving is not async - it freezes the app for a second or two.
-* A weird case in which the window loses focus, and it's gone until it's focused manually. Huh.
-* Database sometimes decides to go crazy. Might be my fault, either way it'll be moved to mongodb or something.
+* A weird case in which the window loses focus, and it's gone until it's focused manually. Huh. Doesn't happen on OSX, dunno about Windows.
