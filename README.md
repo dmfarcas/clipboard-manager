@@ -31,10 +31,6 @@ QR Codes!
 
 ![image](https://media.giphy.com/media/dS24CPNRrJE88/giphy.gif "Image")
 
- 
- 
-Works on OS X, Windows and Linux. Tested only on Arch Linux + KDE and OSX, though.
-
 ___
 
 ### Known bugs
