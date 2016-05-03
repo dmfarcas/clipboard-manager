@@ -14,6 +14,8 @@ You can copy text
  
 ![Copy](https://media.giphy.com/media/Je0VtvAOii8JG/giphy.gif "Copy")
 
+
+
 ...and images!
 
 ![image](https://media.giphy.com/media/cfFkywZVc8sRq/giphy.gif "Image")
@@ -33,6 +35,7 @@ QR Codes!
  
 Works on OS X, Windows and Linux. Tested only on Arch Linux + KDE and OSX, though.
 
+___
 
 ### Known bugs
 * Image saving is not async - it freezes the app for a second or two.
