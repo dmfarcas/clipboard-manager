@@ -1,5 +1,5 @@
 # clipboard-manager
-A simple cross platform clipboard manager created in Electron
+A simple cross platform clipboard manager.
 
 ### Installation instructions
 ```
