@@ -9,3 +9,6 @@ patch:
   'npm:ms:20170412':
     - electron-prebuilt > extract-zip > debug > ms:
         patched: '2017-05-26T07:18:06.208Z'
+  'npm:debug:20170905':
+    - electron-prebuilt > extract-zip > debug:
+        patched: '2017-09-29T07:18:07.813Z'
