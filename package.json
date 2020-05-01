@@ -25,13 +25,13 @@
     "jquery": "^3.0.0",
     "level-js": "^2.2.3",
     "linvodb3": "^3.13.0",
-    "materialize-css": "0.97.8",
+    "materialize-css": "0.99.0",
     "medeadown": "^1.1.8",
     "moment": "^2.11.0",
     "node-notifier": "^4.4.0",
     "qr-image": "^3.1.0",
     "rimraf": "^2.5.0",
-    "snyk": "^1.30.1"
+    "snyk": "^1.316.1"
   },
   "snyk": true
 }

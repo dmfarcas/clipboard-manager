@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.7.1
+version: v1.14.1
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
@@ -9,3 +9,6 @@ patch:
   'npm:ms:20170412':
     - electron-prebuilt > extract-zip > debug > ms:
         patched: '2017-05-26T07:18:06.208Z'
+  SNYK-JS-LODASH-567746:
+    - linvodb3 > async > lodash:
+        patched: '2020-05-01T04:24:24.411Z'
